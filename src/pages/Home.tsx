@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   ArrowRight, Play, Video, Palette, Zap, Users, Trophy, 
@@ -119,30 +119,43 @@ const services = [
   { title: 'YouTube Thumbnail Design', description: 'High-CTR thumbnails designed to maximize views and engagement.', icon: <LayoutGrid size={32} /> }
 ];
 
-const toolLogos = [
+type ToolLogo = {
+  name: string;
+  Icon: (props: { className?: string }) => ReactNode;
+};
+
+const toolLogos: ToolLogo[] = [
   {
     name: 'Premiere Pro',
-    renderIcon: () => <AdobeIconBadge letters="Pr" gradient="linear-gradient(180deg, #5E2395, #1E0A3F)" />
+    Icon: ({ className }) => (
+      <AdobeLogo letters="Pr" colors={['#5E2395', '#1E0A3F']} className={className} />
+    )
   },
   {
     name: 'After Effects',
-    renderIcon: () => <AdobeIconBadge letters="Ae" gradient="linear-gradient(180deg, #6434B2, #0C1A3D)" />
+    Icon: ({ className }) => (
+      <AdobeLogo letters="Ae" colors={['#6434B2', '#0C1A3D']} className={className} />
+    )
   },
   {
     name: 'Photoshop',
-    renderIcon: () => <AdobeIconBadge letters="Ps" gradient="linear-gradient(180deg, #0073DA, #021F53)" />
+    Icon: ({ className }) => (
+      <AdobeLogo letters="Ps" colors={['#0073DA', '#021F53']} className={className} />
+    )
   },
   {
     name: 'Illustrator',
-    renderIcon: () => <AdobeIconBadge letters="Ai" gradient="linear-gradient(180deg, #FF7A00, #6C3900)" />
+    Icon: ({ className }) => (
+      <AdobeLogo letters="Ai" colors={['#FF7A00', '#6C3900']} className={className} />
+    )
   },
   {
     name: 'ChatGPT',
-    renderIcon: () => (
+    Icon: ({ className }) => (
       <img
         src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/ChatGPT_logo.svg/1200px-ChatGPT_logo.svg.png"
         alt="ChatGPT icon"
-        className="w-full h-full object-contain"
+        className={cn('w-full h-full object-contain', className)}
         referrerPolicy="no-referrer"
         loading="lazy"
       />
@@ -294,7 +307,7 @@ const toolLogos = [
                 className="w-32 flex flex-col items-center gap-4 cursor-default group"
               >
                 <div className="w-32 h-32 rounded-[32px] border border-white/30 bg-white/0 p-3 flex items-center justify-center overflow-hidden shadow-[0_25px_45px_rgba(15,23,42,0.25)] transition-all duration-300 group-hover:shadow-[0_30px_60px_rgba(0,122,255,0.35)]">
-                  {tool.renderIcon()}
+                  <tool.Icon className="w-full h-full" />
                 </div>
                 <p className="text-sm font-display text-brand-text/80 uppercase tracking-[0.4em]">{tool.name}</p>
               </motion.div>
@@ -739,13 +752,36 @@ function FloatingIcon({ src, delay, className }: { src: string, delay: number, c
   );
 }
 
-function AdobeIconBadge({ letters, gradient }: { letters: string, gradient: string }) {
+function AdobeLogo({ letters, colors, className }: { letters: string; colors: [string, string]; className?: string }) {
+  const gradientId = `adobe-gradient-${letters.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
   return (
-    <div
-      className="w-full h-full flex items-center justify-center rounded-[24px] text-white text-3xl font-bold tracking-[0.2em]"
-      style={{ background: gradient }}
+    <svg
+      viewBox="0 0 140 140"
+      role="img"
+      aria-label={`${letters} logo`}
+      className={cn('w-full h-full', className)}
+      xmlns="http://www.w3.org/2000/svg"
     >
-      <span className="drop-shadow-[0_10px_20px_rgba(0,0,0,0.45)]">{letters}</span>
-    </div>
+      <defs>
+        <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor={colors[0]} />
+          <stop offset="100%" stopColor={colors[1]} />
+        </linearGradient>
+      </defs>
+      <rect width="140" height="140" rx="32" fill={`url(#${gradientId})`} />
+      <text
+        x="50%"
+        y="62%"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fill="#ffffff"
+        fontSize="48"
+        fontWeight="600"
+        fontFamily="var(--font-display, 'SF Pro Display', 'Inter', sans-serif)"
+        letterSpacing="0.1em"
+      >
+        {letters}
+      </text>
+    </svg>
   );
 }
