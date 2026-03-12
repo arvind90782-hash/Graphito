@@ -110,14 +110,37 @@ export default function Home() {
     }
   ];
 
-  const services = [
-    { title: 'Premium Video Editing', description: 'Cinematic storytelling with professional color grading and sound design.', icon: <Video size={32} /> },
-    { title: 'Motion Graphics', description: 'Dynamic 2D/3D animations that bring your brand to life.', icon: <Zap size={32} /> },
-    { title: 'Graphic Design', description: 'Stunning visuals for social media, print, and digital platforms.', icon: <Palette size={32} /> },
-    { title: 'Web Development', description: 'High-performance, responsive websites built for conversion.', icon: <Globe size={32} /> },
-    { title: 'Brand Identity', description: 'Complete branding solutions from logo design to brand strategy.', icon: <Layout size={32} /> },
-    { title: 'YouTube Thumbnail Design', description: 'High-CTR thumbnails designed to maximize views and engagement.', icon: <LayoutGrid size={32} /> }
-  ];
+const services = [
+  { title: 'Premium Video Editing', description: 'Cinematic storytelling with professional color grading and sound design.', icon: <Video size={32} /> },
+  { title: 'Motion Graphics', description: 'Dynamic 2D/3D animations that bring your brand to life.', icon: <Zap size={32} /> },
+  { title: 'Graphic Design', description: 'Stunning visuals for social media, print, and digital platforms.', icon: <Palette size={32} /> },
+  { title: 'Web Development', description: 'High-performance, responsive websites built for conversion.', icon: <Globe size={32} /> },
+  { title: 'Brand Identity', description: 'Complete branding solutions from logo design to brand strategy.', icon: <Layout size={32} /> },
+  { title: 'YouTube Thumbnail Design', description: 'High-CTR thumbnails designed to maximize views and engagement.', icon: <LayoutGrid size={32} /> }
+];
+
+const toolLogos = [
+  {
+    name: 'Premiere Pro',
+    logo: 'https://cdn.worldvectorlogo.com/logos/adobe-premiere-pro-cc.svg'
+  },
+  {
+    name: 'After Effects',
+    logo: 'https://cdn.worldvectorlogo.com/logos/adobe-after-effects-cc.svg'
+  },
+  {
+    name: 'Photoshop',
+    logo: 'https://cdn.worldvectorlogo.com/logos/adobe-photoshop-2.svg'
+  },
+  {
+    name: 'Illustrator',
+    logo: 'https://cdn.worldvectorlogo.com/logos/adobe-illustrator-cc.svg'
+  },
+  {
+    name: 'ChatGPT',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg'
+  }
+];
 
   const founders = [
     {
@@ -252,18 +275,27 @@ export default function Home() {
       <section className="py-20 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-brand-text/30 font-bold uppercase tracking-[0.3em] text-sm mb-12">Tools We Master</p>
-          <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
-            {['Premiere Pro', 'After Effects', 'Photoshop', 'Illustrator', 'ChatGPT'].map((tool, idx) => (
-              <motion.span 
-                key={tool} 
-                initial={{ opacity: 0, scale: 0 }}
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 opacity-60 hover:opacity-100 transition-opacity duration-500">
+            {toolLogos.map((tool, idx) => (
+              <motion.div
+                key={tool.name}
+                initial={{ opacity: 0, scale: 0.4 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                whileHover={{ scale: 1.5, rotate: idx % 2 === 0 ? 10 : -10, color: "#007AFF" }}
-                transition={{ type: "spring", stiffness: 300, delay: idx * 0.1 }}
-                className="text-2xl font-display font-bold text-[var(--text-primary)] cursor-default"
+                whileHover={{ scale: 1.05, rotate: idx % 2 === 0 ? 2 : -2 }}
+                transition={{ type: "spring", stiffness: 260, delay: idx * 0.05 }}
+                className="w-32 flex flex-col items-center gap-3 cursor-default"
               >
-                {tool}
-              </motion.span>
+                <div className="w-20 h-20 rounded-3xl bg-white/90 border border-brand-accent/20 p-4 flex items-center justify-center shadow-lg shadow-brand-accent/10">
+                  <img 
+                    src={tool.logo} 
+                    alt={`${tool.name} logo`} 
+                    className="max-w-full max-h-full object-contain filter drop-shadow-[0_0_20px_rgba(0,0,0,0.15)]"
+                    referrerPolicy="no-referrer"
+                    loading="lazy"
+                  />
+                </div>
+                <p className="text-base font-display text-brand-text/70 uppercase tracking-[0.2em]">{tool.name}</p>
+              </motion.div>
             ))}
           </div>
         </div>
