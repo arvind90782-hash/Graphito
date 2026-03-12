@@ -122,23 +122,31 @@ const services = [
 const toolLogos = [
   {
     name: 'Premiere Pro',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Adobe_Premiere_Pro_CC_icon.svg/1200px-Adobe_Premiere_Pro_CC_icon.svg.png'
+    renderIcon: () => <AdobeIconBadge letters="Pr" gradient="linear-gradient(180deg, #5E2395, #1E0A3F)" />
   },
   {
     name: 'After Effects',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Adobe_After_Effects_CC_icon.svg/1200px-Adobe_After_Effects_CC_icon.svg.png'
+    renderIcon: () => <AdobeIconBadge letters="Ae" gradient="linear-gradient(180deg, #6434B2, #0C1A3D)" />
   },
   {
     name: 'Photoshop',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Adobe_Photoshop_CC_icon.svg/1200px-Adobe_Photoshop_CC_icon.svg.png'
+    renderIcon: () => <AdobeIconBadge letters="Ps" gradient="linear-gradient(180deg, #0073DA, #021F53)" />
   },
   {
     name: 'Illustrator',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Adobe_Illustrator_CC_icon.svg/1200px-Adobe_Illustrator_CC_icon.svg.png'
+    renderIcon: () => <AdobeIconBadge letters="Ai" gradient="linear-gradient(180deg, #FF7A00, #6C3900)" />
   },
   {
     name: 'ChatGPT',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/ChatGPT_logo.svg/1200px-ChatGPT_logo.svg.png'
+    renderIcon: () => (
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/ChatGPT_logo.svg/1200px-ChatGPT_logo.svg.png"
+        alt="ChatGPT icon"
+        className="w-full h-full object-contain"
+        referrerPolicy="no-referrer"
+        loading="lazy"
+      />
+    )
   }
 ];
 
@@ -285,16 +293,10 @@ const toolLogos = [
                 transition={{ type: "spring", stiffness: 260, delay: idx * 0.05 }}
                 className="w-32 flex flex-col items-center gap-4 cursor-default group"
               >
-                <div className="w-32 h-32 rounded-[32px] border border-white/40 bg-transparent p-2 flex items-center justify-center overflow-hidden shadow-[0_25px_45px_rgba(15,23,42,0.25)] transition-all duration-300 group-hover:shadow-[0_30px_60px_rgba(0,122,255,0.35)]">
-                  <img 
-                    src={tool.logo} 
-                    alt={`${tool.name} icon`} 
-                    className="w-full h-full object-contain"
-                    referrerPolicy="no-referrer"
-                    loading="lazy"
-                  />
+                <div className="w-32 h-32 rounded-[32px] border border-white/30 bg-white/0 p-3 flex items-center justify-center overflow-hidden shadow-[0_25px_45px_rgba(15,23,42,0.25)] transition-all duration-300 group-hover:shadow-[0_30px_60px_rgba(0,122,255,0.35)]">
+                  {tool.renderIcon()}
                 </div>
-                <p className="text-sm font-display text-brand-text/70 uppercase tracking-[0.4em]">{tool.name}</p>
+                <p className="text-sm font-display text-brand-text/80 uppercase tracking-[0.4em]">{tool.name}</p>
               </motion.div>
             ))}
           </div>
@@ -734,5 +736,16 @@ function FloatingIcon({ src, delay, className }: { src: string, delay: number, c
         referrerPolicy="no-referrer"
       />
     </motion.div>
+  );
+}
+
+function AdobeIconBadge({ letters, gradient }: { letters: string, gradient: string }) {
+  return (
+    <div
+      className="w-full h-full flex items-center justify-center rounded-[24px] text-white text-3xl font-bold tracking-[0.2em]"
+      style={{ background: gradient }}
+    >
+      <span className="drop-shadow-[0_10px_20px_rgba(0,0,0,0.45)]">{letters}</span>
+    </div>
   );
 }
