@@ -122,23 +122,23 @@ const services = [
 const toolLogos = [
   {
     name: 'Premiere Pro',
-    logo: 'https://cdn.worldvectorlogo.com/logos/adobe-premiere-pro-cc.svg'
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Adobe_Premiere_Pro_CC_icon.svg/1200px-Adobe_Premiere_Pro_CC_icon.svg.png'
   },
   {
     name: 'After Effects',
-    logo: 'https://cdn.worldvectorlogo.com/logos/adobe-after-effects-cc.svg'
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Adobe_After_Effects_CC_icon.svg/1200px-Adobe_After_Effects_CC_icon.svg.png'
   },
   {
     name: 'Photoshop',
-    logo: 'https://cdn.worldvectorlogo.com/logos/adobe-photoshop-2.svg'
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Adobe_Photoshop_CC_icon.svg/1200px-Adobe_Photoshop_CC_icon.svg.png'
   },
   {
     name: 'Illustrator',
-    logo: 'https://cdn.worldvectorlogo.com/logos/adobe-illustrator-cc.svg'
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Adobe_Illustrator_CC_icon.svg/1200px-Adobe_Illustrator_CC_icon.svg.png'
   },
   {
     name: 'ChatGPT',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg'
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/ChatGPT_logo.svg/1200px-ChatGPT_logo.svg.png'
   }
 ];
 
@@ -275,26 +275,26 @@ const toolLogos = [
       <section className="py-20 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-brand-text/30 font-bold uppercase tracking-[0.3em] text-sm mb-12">Tools We Master</p>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 opacity-60 hover:opacity-100 transition-opacity duration-500">
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
             {toolLogos.map((tool, idx) => (
               <motion.div
                 key={tool.name}
-                initial={{ opacity: 0, scale: 0.4 }}
+                initial={{ opacity: 0, scale: 0.5 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                whileHover={{ scale: 1.05, rotate: idx % 2 === 0 ? 2 : -2 }}
+                whileHover={{ scale: 1.08, rotate: idx % 2 === 0 ? 1.5 : -1.5 }}
                 transition={{ type: "spring", stiffness: 260, delay: idx * 0.05 }}
-                className="w-32 flex flex-col items-center gap-3 cursor-default"
+                className="w-32 flex flex-col items-center gap-4 cursor-default group"
               >
-                <div className="w-20 h-20 rounded-3xl bg-white/90 border border-brand-accent/20 p-4 flex items-center justify-center shadow-lg shadow-brand-accent/10">
+                <div className="w-32 h-32 rounded-[32px] border border-white/40 bg-transparent p-2 flex items-center justify-center overflow-hidden shadow-[0_25px_45px_rgba(15,23,42,0.25)] transition-all duration-300 group-hover:shadow-[0_30px_60px_rgba(0,122,255,0.35)]">
                   <img 
                     src={tool.logo} 
-                    alt={`${tool.name} logo`} 
-                    className="max-w-full max-h-full object-contain filter drop-shadow-[0_0_20px_rgba(0,0,0,0.15)]"
+                    alt={`${tool.name} icon`} 
+                    className="w-full h-full object-contain"
                     referrerPolicy="no-referrer"
                     loading="lazy"
                   />
                 </div>
-                <p className="text-base font-display text-brand-text/70 uppercase tracking-[0.2em]">{tool.name}</p>
+                <p className="text-sm font-display text-brand-text/70 uppercase tracking-[0.4em]">{tool.name}</p>
               </motion.div>
             ))}
           </div>
