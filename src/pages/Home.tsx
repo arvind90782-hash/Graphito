@@ -581,9 +581,9 @@ export default function Home() {
                     <Phone size={24} />
                   </div>
                     <div>
-                      <p className="text-sm uppercase tracking-widest font-bold text-[#0F172A] dark:text-[#E2E8F0]">Call Us</p>
-                      <p className="text-lg sm:text-xl font-semibold text-[#0F172A] dark:text-[#F8FAFC]">+91 7705090700</p>
-                      <p className="text-lg sm:text-xl font-semibold text-[#0F172A] dark:text-[#F8FAFC]">+91 9277072409</p>
+                      <p className="text-sm uppercase tracking-widest font-bold text-[#0F172A] dark:text-[#0F172A]">Call Us</p>
+                      <p className="text-lg sm:text-xl font-semibold text-[#0F172A] dark:text-[#0F172A]">+91 7705090700</p>
+                      <p className="text-lg sm:text-xl font-semibold text-[#0F172A] dark:text-[#0F172A]">+91 9277072409</p>
                     </div>
                 </div>
                 <div className="flex items-center space-x-6">
@@ -591,8 +591,8 @@ export default function Home() {
                     <Mail size={24} />
                   </div>
                     <div>
-                      <p className="text-sm uppercase tracking-widest font-bold text-[#0F172A] dark:text-[#E2E8F0]">Email Us</p>
-                      <p className="text-lg sm:text-xl font-semibold text-[#0F172A] dark:text-[#F8FAFC]">contact@graphitoagency.com</p>
+                      <p className="text-sm uppercase tracking-widest font-bold text-[#0F172A] dark:text-[#0F172A]">Email Us</p>
+                      <p className="text-lg sm:text-xl font-semibold text-[#0F172A] dark:text-[#0F172A]">contact@graphitoagency.com</p>
                     </div>
                 </div>
               </div>
