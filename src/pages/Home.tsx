@@ -140,11 +140,11 @@ const toolLogos = [
     name: 'ChatGPT',
     src: 'https://cdn-icons-png.flaticon.com/512/11865/11865326.png'
   },
-  {
-    name: 'Visual Studio Code',
-    src: 'https://www.stickpng.com/assets/images/5846d5e3cef1014c0b5e4908.png'
-  }
-];
+    {
+      name: 'Visual Studio Code',
+      src: 'https://cdn.worldvectorlogo.com/logos/visual-studio-code-1.svg'
+    }
+  ];
 
   const founders = [
     {
@@ -534,9 +534,9 @@ const toolLogos = [
                     <Phone size={24} />
                   </div>
                   <div>
-                    <p className="text-brand-text/30 text-sm uppercase tracking-widest font-bold">Call Us</p>
-                    <p className="text-lg sm:text-xl font-semibold">+91 7705090700</p>
-                    <p className="text-lg sm:text-xl font-semibold">+91 9277072409</p>
+                    <p className="text-[#5F6470] dark:text-[#B9BFC9] text-sm uppercase tracking-widest font-bold">Call Us</p>
+                    <p className="text-lg sm:text-xl font-semibold text-[#1D1D1F] dark:text-[#EBEBF5]/90">+91 7705090700</p>
+                    <p className="text-lg sm:text-xl font-semibold text-[#1D1D1F] dark:text-[#EBEBF5]/90">+91 9277072409</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-6">
@@ -544,8 +544,8 @@ const toolLogos = [
                     <Mail size={24} />
                   </div>
                   <div>
-                    <p className="text-brand-text/30 text-sm uppercase tracking-widest font-bold">Email Us</p>
-                    <p className="text-lg sm:text-xl font-semibold">contact@graphitoagency.com</p>
+                    <p className="text-[#5F6470] dark:text-[#B9BFC9] text-sm uppercase tracking-widest font-bold">Email Us</p>
+                    <p className="text-lg sm:text-xl font-semibold text-[#1D1D1F] dark:text-[#EBEBF5]/90">contact@graphitoagency.com</p>
                   </div>
                 </div>
               </div>
