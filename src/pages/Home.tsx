@@ -1,4 +1,4 @@
-import React, { useState, type ReactNode } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   ArrowRight, Play, Video, Palette, Zap, Users, Trophy, 
@@ -119,47 +119,30 @@ const services = [
   { title: 'YouTube Thumbnail Design', description: 'High-CTR thumbnails designed to maximize views and engagement.', icon: <LayoutGrid size={32} /> }
 ];
 
-type ToolLogo = {
-  name: string;
-  Icon: (props: { className?: string }) => ReactNode;
-};
-
-const toolLogos: ToolLogo[] = [
+const toolLogos = [
   {
-    name: 'Premiere Pro',
-    Icon: ({ className }) => (
-      <AdobeLogo letters="Pr" colors={['#5E2395', '#1E0A3F']} className={className} />
-    )
+    name: 'Adobe Premiere Pro',
+    src: 'https://cdn-icons-png.flaticon.com/512/5968/5968525.png'
   },
   {
-    name: 'After Effects',
-    Icon: ({ className }) => (
-      <AdobeLogo letters="Ae" colors={['#6434B2', '#0C1A3D']} className={className} />
-    )
+    name: 'Adobe After Effects',
+    src: 'https://cdn-icons-png.flaticon.com/512/5968/5968428.png'
+  },
+  {
+    name: 'Adobe Illustrator',
+    src: 'https://cdn-icons-png.flaticon.com/512/5968/5968472.png'
   },
   {
     name: 'Photoshop',
-    Icon: ({ className }) => (
-      <AdobeLogo letters="Ps" colors={['#0073DA', '#021F53']} className={className} />
-    )
-  },
-  {
-    name: 'Illustrator',
-    Icon: ({ className }) => (
-      <AdobeLogo letters="Ai" colors={['#FF7A00', '#6C3900']} className={className} />
-    )
+    src: 'https://cdn-icons-png.flaticon.com/512/5968/5968520.png'
   },
   {
     name: 'ChatGPT',
-    Icon: ({ className }) => (
-      <img
-        src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/ChatGPT_logo.svg/1200px-ChatGPT_logo.svg.png"
-        alt="ChatGPT icon"
-        className={cn('w-full h-full object-contain', className)}
-        referrerPolicy="no-referrer"
-        loading="lazy"
-      />
-    )
+    src: 'https://cdn-icons-png.flaticon.com/512/11865/11865326.png'
+  },
+  {
+    name: 'Visual Studio Code',
+    src: 'https://www.stickpng.com/assets/images/5846d5e3cef1014c0b5e4908.png'
   }
 ];
 
@@ -189,7 +172,7 @@ const toolLogos: ToolLogo[] = [
           <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-400/5 rounded-full blur-[120px]" />
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-16 sm:py-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, x: -100, rotate: -5 }}
@@ -205,7 +188,7 @@ const toolLogos: ToolLogo[] = [
                 <Zap size={16} />
                 <span>Premium Creative Agency</span>
               </motion.div>
-              <h1 className="text-6xl md:text-8xl font-display font-bold tracking-tighter leading-[0.9] mb-8">
+              <h1 className="text-5xl sm:text-6xl md:text-7xl font-display font-bold tracking-tighter leading-[0.95] mb-8">
                 <motion.span 
                   initial={{ y: 50, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -223,7 +206,7 @@ const toolLogos: ToolLogo[] = [
                   Inspires.
                 </motion.span>
               </h1>
-              <p className="text-xl text-brand-text/60 leading-relaxed mb-10 max-w-lg">
+              <p className="text-lg sm:text-xl text-brand-text/60 leading-relaxed mb-10 max-w-3xl">
                 We are a premium digital agency crafting cinematic videos, stunning graphics, and high-performance web experiences for global brands.
               </p>
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6">
@@ -266,37 +249,16 @@ const toolLogos: ToolLogo[] = [
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-accent/20 to-transparent" />
               </motion.div>
               
-              {/* Floating Elements */}
-              <FloatingIcon 
-                src="https://cdn.worldvectorlogo.com/logos/adobe-premiere-pro-cc.svg" 
-                delay={0} 
-                className="top-10 -left-10 w-20 h-20 animate-sticker" 
-              />
-              <FloatingIcon 
-                src="https://cdn.worldvectorlogo.com/logos/adobe-after-effects-cc.svg" 
-                delay={1} 
-                className="bottom-20 -left-16 w-24 h-24 animate-sticker" 
-              />
-              <FloatingIcon 
-                src="https://cdn.worldvectorlogo.com/logos/adobe-photoshop-2.svg" 
-                delay={0.5} 
-                className="top-20 -right-12 w-20 h-20 animate-sticker" 
-              />
-              <FloatingIcon 
-                src="https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg" 
-                delay={1.5} 
-                className="bottom-10 -right-16 w-24 h-24 animate-sticker" 
-              />
             </motion.div>
           </div>
         </div>
       </section>
 
       {/* Tools We Master Section */}
-      <section className="py-20 bg-white overflow-hidden">
+      <section className="py-16 sm:py-20 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-brand-text/30 font-bold uppercase tracking-[0.3em] text-sm mb-12">Tools We Master</p>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
+          <p className="text-center text-brand-text/30 font-bold uppercase tracking-[0.3em] text-sm mb-12">Software We Use</p>
+          <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-8 md:gap-10">
             {toolLogos.map((tool, idx) => (
               <motion.div
                 key={tool.name}
@@ -304,12 +266,18 @@ const toolLogos: ToolLogo[] = [
                 whileInView={{ opacity: 1, scale: 1 }}
                 whileHover={{ scale: 1.08, rotate: idx % 2 === 0 ? 1.5 : -1.5 }}
                 transition={{ type: "spring", stiffness: 260, delay: idx * 0.05 }}
-                className="w-32 flex flex-col items-center gap-4 cursor-default group"
+                className="w-24 sm:w-28 flex flex-col items-center gap-3 cursor-default group"
               >
-                <div className="w-32 h-32 rounded-[32px] border border-white/30 bg-white/0 p-3 flex items-center justify-center overflow-hidden shadow-[0_25px_45px_rgba(15,23,42,0.25)] transition-all duration-300 group-hover:shadow-[0_30px_60px_rgba(0,122,255,0.35)]">
-                  <tool.Icon className="w-full h-full" />
+                <div className="w-24 sm:w-28 h-24 sm:h-28 rounded-[32px] border border-white/30 bg-white/0 p-2 sm:p-3 flex items-center justify-center overflow-hidden shadow-[0_25px_45px_rgba(15,23,42,0.25)] transition-all duration-300 group-hover:shadow-[0_30px_60px_rgba(0,122,255,0.35)]">
+                  <img
+                    src={tool.src}
+                    alt={`${tool.name} icon`}
+                    className="w-full h-full object-contain"
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                  />
                 </div>
-                <p className="text-sm font-display text-brand-text/80 uppercase tracking-[0.4em]">{tool.name}</p>
+                <p className="text-sm font-display text-brand-text/80 uppercase tracking-[0.4em] text-center">{tool.name}</p>
               </motion.div>
             ))}
           </div>
@@ -317,9 +285,9 @@ const toolLogos: ToolLogo[] = [
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-32 bg-brand-secondary/30">
+      <section id="services" className="py-20 sm:py-24 lg:py-28 bg-brand-secondary/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20">
+          <div className="text-center mb-16">
             <motion.h2 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -333,7 +301,7 @@ const toolLogos: ToolLogo[] = [
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
             {services.map((service, index) => (
               <motion.div
                 key={index}
@@ -346,9 +314,9 @@ const toolLogos: ToolLogo[] = [
                 }}
                 viewport={{ once: true }}
                 transition={{ ...springTransition, delay: index * 0.1 }}
-                className="p-10 ios-card glass-hover group perspective-1000"
+                className="p-6 sm:p-8 lg:p-10 ios-card glass-hover group perspective-1000 min-h-[310px] sm:min-h-[330px]"
               >
-                <div className="w-16 h-16 rounded-2xl bg-brand-accent/10 flex items-center justify-center text-brand-accent mb-8 group-hover:scale-110 transition-transform duration-500">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-brand-accent/10 flex items-center justify-center text-brand-accent mb-8 group-hover:scale-110 transition-transform duration-500">
                   {service.icon}
                 </div>
                 <h3 className="text-2xl font-display font-bold mb-4">{service.title}</h3>
@@ -360,7 +328,7 @@ const toolLogos: ToolLogo[] = [
       </section>
 
       {/* Portfolio Section */}
-      <section id="portfolio" className="py-32 bg-white">
+      <section id="portfolio" className="py-20 sm:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
             <div>
@@ -377,7 +345,7 @@ const toolLogos: ToolLogo[] = [
               </p>
             </div>
             
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-2 sm:gap-3">
               {categories.map((category) => (
                 <button
                   key={category}
@@ -385,8 +353,8 @@ const toolLogos: ToolLogo[] = [
                   className={cn(
                     "px-6 py-2 rounded-full text-sm font-semibold transition-all",
                     activeCategory === category 
-                      ? "bg-brand-accent text-white shadow-lg shadow-brand-accent/20" 
-                      : "bg-brand-secondary text-brand-text/60 hover:bg-brand-secondary/80"
+                    ? "bg-brand-accent text-white shadow-lg shadow-brand-accent/20" 
+                    : "bg-brand-secondary text-brand-text/60 hover:bg-brand-secondary/80"
                   )}
                 >
                   {category}
@@ -395,7 +363,7 @@ const toolLogos: ToolLogo[] = [
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             <AnimatePresence mode="popLayout">
               {filteredItems.map((item) => (
                 <motion.div
@@ -413,7 +381,7 @@ const toolLogos: ToolLogo[] = [
                   className="group cursor-pointer"
                   onClick={() => setSelectedItem(item)}
                 >
-                  <div className="relative aspect-[4/3] rounded-[32px] overflow-hidden mb-6 ios-card">
+                  <div className="relative aspect-[4/3] rounded-[28px] sm:rounded-[32px] overflow-hidden mb-4 sm:mb-6 ios-card">
                     <img 
                       src={item.image} 
                       alt={item.title} 
@@ -436,9 +404,9 @@ const toolLogos: ToolLogo[] = [
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-32 bg-brand-secondary/30 relative overflow-hidden">
+      <section id="about" className="py-24 sm:py-28 bg-brand-secondary/30 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center mb-32">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-28 sm:mb-32">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -499,7 +467,7 @@ const toolLogos: ToolLogo[] = [
             <p className="text-brand-text/50 max-w-xl mx-auto">The creative and technical leads behind Graphito's success.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-32">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 mb-24 sm:mb-32">
             {founders.map((founder, index) => (
               <motion.div
                 key={index}
@@ -512,7 +480,7 @@ const toolLogos: ToolLogo[] = [
                 }}
                 viewport={{ once: true }}
                 transition={{ ...springTransition, delay: index * 0.2 }}
-                className="p-10 ios-card glass-hover relative overflow-hidden group"
+                className="p-6 sm:p-8 lg:p-10 ios-card glass-hover relative overflow-hidden group"
               >
                 <div className="flex flex-col md:flex-row gap-8 items-center md:items-start relative z-10">
                   <div className="reflection">
@@ -544,31 +512,31 @@ const toolLogos: ToolLogo[] = [
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-32 bg-white">
+      <section id="contact" className="py-24 sm:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 sm:gap-16">
             <div>
               <motion.h2 
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="text-5xl md:text-7xl font-display font-bold tracking-tighter mb-8"
+                className="text-4xl sm:text-5xl md:text-6xl font-display font-bold tracking-tighter mb-8"
               >
                 Let's <span className="text-brand-accent">Collaborate</span>
               </motion.h2>
-              <p className="text-xl text-brand-text/50 leading-relaxed mb-12">
+              <p className="text-lg sm:text-xl text-brand-text/50 leading-relaxed mb-12">
                 Ready to take your brand to the next level? Fill out the form and we'll get back to you within 24 hours to discuss your project.
               </p>
 
-              <div className="space-y-8">
+              <div className="space-y-6">
                 <div className="flex items-center space-x-6">
                   <div className="w-14 h-14 rounded-2xl bg-brand-accent/10 flex items-center justify-center text-brand-accent">
                     <Phone size={24} />
                   </div>
                   <div>
                     <p className="text-brand-text/30 text-sm uppercase tracking-widest font-bold">Call Us</p>
-                    <p className="text-xl font-semibold">+91 7705090700</p>
-                    <p className="text-xl font-semibold">+91 9277072409</p>
+                    <p className="text-lg sm:text-xl font-semibold">+91 7705090700</p>
+                    <p className="text-lg sm:text-xl font-semibold">+91 9277072409</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-6">
@@ -577,7 +545,7 @@ const toolLogos: ToolLogo[] = [
                   </div>
                   <div>
                     <p className="text-brand-text/30 text-sm uppercase tracking-widest font-bold">Email Us</p>
-                    <p className="text-xl font-semibold">contact@graphitoagency.com</p>
+                    <p className="text-lg sm:text-xl font-semibold">contact@graphitoagency.com</p>
                   </div>
                 </div>
               </div>
@@ -617,9 +585,9 @@ const toolLogos: ToolLogo[] = [
                   <motion.form 
                     onSubmit={handleSubmit} 
                     whileHover={{ scale: 1.01 }}
-                    className="p-10 rounded-[40px] ios-card space-y-6 shadow-2xl shadow-black/5"
+                    className="p-8 sm:p-10 rounded-[36px] ios-card space-y-5 sm:space-y-6 shadow-2xl shadow-black/5 w-full"
                   >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                       <div className="space-y-2">
                         <label className="text-sm font-medium text-brand-text/50 ml-1">Full Name</label>
                         <motion.input 
@@ -633,7 +601,7 @@ const toolLogos: ToolLogo[] = [
                           type="email" name="email" required className="w-full bg-brand-secondary/50 border border-black/[0.05] rounded-2xl px-5 py-4 focus:outline-none focus:border-brand-accent transition-colors" placeholder="john@example.com" />
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                       <div className="space-y-2">
                         <label className="text-sm font-medium text-brand-text/50 ml-1">Phone Number</label>
                         <motion.input 
@@ -726,62 +694,5 @@ const toolLogos: ToolLogo[] = [
         )}
       </AnimatePresence>
     </div>
-  );
-}
-
-function FloatingIcon({ src, delay, className }: { src: string, delay: number, className: string }) {
-  return (
-    <motion.div
-      initial={{ y: 0 }}
-      animate={{ y: [0, -20, 0] }}
-      transition={{
-        duration: 4,
-        repeat: Infinity,
-        ease: "easeInOut",
-        delay
-      }}
-      className={`absolute ${className} reflection-strong`}
-    >
-      <img 
-        src={src} 
-        alt="App Icon" 
-        className="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(0,122,255,0.2)]"
-        referrerPolicy="no-referrer"
-      />
-    </motion.div>
-  );
-}
-
-function AdobeLogo({ letters, colors, className }: { letters: string; colors: [string, string]; className?: string }) {
-  const gradientId = `adobe-gradient-${letters.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
-  return (
-    <svg
-      viewBox="0 0 140 140"
-      role="img"
-      aria-label={`${letters} logo`}
-      className={cn('w-full h-full', className)}
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <defs>
-        <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor={colors[0]} />
-          <stop offset="100%" stopColor={colors[1]} />
-        </linearGradient>
-      </defs>
-      <rect width="140" height="140" rx="32" fill={`url(#${gradientId})`} />
-      <text
-        x="50%"
-        y="62%"
-        textAnchor="middle"
-        dominantBaseline="middle"
-        fill="#ffffff"
-        fontSize="48"
-        fontWeight="600"
-        fontFamily="var(--font-display, 'SF Pro Display', 'Inter', sans-serif)"
-        letterSpacing="0.1em"
-      >
-        {letters}
-      </text>
-    </svg>
   );
 }

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Instagram, Mail, Phone, Heart, MessageCircle } from 'lucide-react';
 import { motion } from 'motion/react';
+import { hasGeminiApiKey } from '../utils/genai';
 
 export default function Footer() {
   return (
@@ -79,7 +80,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-10 border-t border-[var(--border-color)] flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+        <div className="pt-10 border-t border-[var(--border-color)] flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 md:space-x-6">
           <p className="text-[var(--text-primary)]/30 text-sm">
             © {new Date().getFullYear()} Graphito Creative Agency. All rights reserved.
           </p>
@@ -89,6 +90,11 @@ export default function Footer() {
             <span>by</span>
             <span className="text-[var(--text-primary)]/60 font-medium">Editor Nishant</span>
           </div>
+          {hasGeminiApiKey && (
+            <span className="rounded-full border border-brand-accent/40 px-3 py-1 text-[var(--text-primary)]/60 text-[11px] font-semibold uppercase tracking-wider">
+              Google AI Studio key loaded
+            </span>
+          )}
         </div>
       </div>
     </footer>

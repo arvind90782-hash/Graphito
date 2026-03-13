@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, type ChangeEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { auth, db } from '../firebase';
 import { 
@@ -23,6 +23,14 @@ export default function Auth() {
   const [message, setMessage] = useState<string | null>(null);
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
+  const passwordAutoComplete = isLogin ? 'current-password' : 'new-password';
+
+  const handleFieldChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (event: ChangeEvent<HTMLInputElement>) => {
+    setter(event.target.value);
+    if (error) {
+      setError(null);
+    }
+  };
   
   const navigate = useNavigate();
 
@@ -103,12 +111,12 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen pt-20 flex items-center justify-center bg-black relative overflow-hidden">
+    <div className="min-h-screen pt-20 flex items-center justify-center bg-black relative overflow-hidden px-4 sm:px-0">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-accent/10 rounded-full blur-[120px]" />
       
       <Link 
         to="/" 
-        className="absolute top-28 left-8 flex items-center space-x-2 text-white/50 hover:text-brand-accent transition-colors z-20"
+        className="absolute top-28 left-4 sm:left-8 flex items-center space-x-2 text-white/50 hover:text-brand-accent transition-colors z-20"
       >
         <ArrowLeft size={20} />
         <span className="font-bold uppercase tracking-widest text-xs">Back to Home</span>
@@ -117,7 +125,7 @@ export default function Auth() {
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-md p-10 rounded-[40px] glass relative z-10"
+        className="w-full max-w-md p-6 sm:p-10 rounded-[36px] glass relative z-10"
       >
         <div className="text-center mb-10">
           <div className="w-20 h-20 rounded-3xl bg-brand-accent/10 flex items-center justify-center mx-auto mb-6">
@@ -152,7 +160,8 @@ export default function Auth() {
                 placeholder="Full Name"
                 required
                 value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
+                onChange={handleFieldChange(setDisplayName)}
+                autoComplete="name"
                 className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-4 focus:outline-none focus:border-brand-accent transition-colors"
               />
             </div>
@@ -164,7 +173,8 @@ export default function Auth() {
               placeholder="Email Address"
               required
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleFieldChange(setEmail)}
+              autoComplete="email"
               className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-4 focus:outline-none focus:border-brand-accent transition-colors"
             />
           </div>
@@ -175,7 +185,8 @@ export default function Auth() {
               placeholder="Password"
               required
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handleFieldChange(setPassword)}
+              autoComplete={passwordAutoComplete}
               className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-12 py-4 focus:outline-none focus:border-brand-accent transition-colors"
             />
             <button
@@ -269,14 +280,15 @@ export default function Auth() {
               <form onSubmit={handleForgotPassword} className="space-y-6">
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
-                  <input 
-                    type="email" 
-                    placeholder="Email Address"
-                    required
-                    value={forgotEmail}
-                    onChange={(e) => setForgotEmail(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-4 focus:outline-none focus:border-brand-accent transition-colors"
-                  />
+                <input 
+                  type="email" 
+                  placeholder="Email Address"
+                  required
+                  value={forgotEmail}
+                  onChange={handleFieldChange(setForgotEmail)}
+                  autoComplete="email"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-4 focus:outline-none focus:border-brand-accent transition-colors"
+                />
                 </div>
                 <div className="flex space-x-4">
                   <button 
@@ -302,4 +314,3 @@ export default function Auth() {
     </div>
   );
 }
-
