@@ -3,12 +3,9 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   ArrowRight, Play, Video, Palette, Zap, Users, Trophy, 
   Image as ImageIcon, Globe, Layout, UserCircle, Monitor, 
-  LayoutGrid, ExternalLink, X, Mail, Phone, MapPin, 
-  Send, CheckCircle2 
+  LayoutGrid, ExternalLink, X, Mail, Phone, MapPin 
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { db } from '../firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { cn } from '../utils/cn';
 
 const portfolioItems = [
@@ -64,8 +61,6 @@ const springTransition = {
   damping: 20
 };
 
-type NotificationChannel = 'email' | 'phone';
-
 const services = [
   { title: 'Premium Video Editing', description: 'Cinematic storytelling with professional color grading and sound design.', icon: <Video size={32} /> },
   { title: 'Motion Graphics', description: 'Dynamic 2D/3D animations that bring your brand to life.', icon: <Zap size={32} /> },
@@ -102,16 +97,6 @@ const toolLogos = [
   }
 ];
 
-const notificationChannels = [
-  { value: 'email', label: 'Gmail' },
-  { value: 'phone', label: 'Phone / WhatsApp' }
-];
-
-const channelLabels: Record<NotificationChannel, string> = {
-  email: 'Gmail',
-  phone: 'Phone / WhatsApp'
-};
-
 const founderProfiles = [
   {
     id: 'arman',
@@ -119,8 +104,6 @@ const founderProfiles = [
     role: 'Founder & Creative Director',
     phone: '+91 7705090700',
     email: 'contact@graphitoagency.com',
-    gmail: 'armanali@gmail.com',
-    whatsapp: '919277072409',
     image: 'https://framerusercontent.com/images/kqv3sTb1FdwKJhQbeBRiQBo2HQ.png?width=863&height=998'
   },
   {
@@ -129,21 +112,13 @@ const founderProfiles = [
     role: 'Co-Founder & Technical / Editing Lead',
     phone: '+91 9277072409',
     email: 'arvind90782@gmail.com',
-    gmail: 'contact@graphitoagency.com',
-    whatsapp: '917705090700',
     image: 'https://lh3.googleusercontent.com/d/1e_jpmmyBMp9GT7aKE3_mFVQ5amBxhCZ-'
   }
 ];
 
-const EMAILJS_URL = 'https://api.emailjs.com/api/v1.0/email/send';
-
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [selectedItem, setSelectedItem] = useState<typeof portfolioItems[0] | null>(null);
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [lastRecipient, setLastRecipient] = useState(founderProfiles[0]);
-  const [lastChannel, setLastChannel] = useState<NotificationChannel>('email');
 
   const filteredItems = activeCategory === 'All' 
     ? portfolioItems 
@@ -154,91 +129,6 @@ export default function Home() {
   const emailJsUserId = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
   const hasEmailJsConfig = Boolean(emailJsServiceId && emailJsTemplateId && emailJsUserId);
   const [statusMessage, setStatusMessage] = useState('');
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    setStatusMessage('');
-    const formData = new FormData(e.currentTarget);
-    const formValues = Object.fromEntries(formData.entries()) as Record<string, string>;
-
-    const recipientId = formValues.recipient ?? founderProfiles[0].id;
-    const channel = (formValues.channel as NotificationChannel) ?? 'email';
-    const recipient = founderProfiles.find((profile) => profile.id === recipientId) ?? founderProfiles[0];
-    const sanitize = (value: string | undefined) => (value ? value.trim() : '—');
-
-    const messageLines = [
-      `Full Name: ${sanitize(formValues.name)}`,
-      `Email: ${sanitize(formValues.email)}`,
-      `Phone: ${sanitize(formValues.phone)}`,
-      `Project Type: ${sanitize(formValues.projectType)}`,
-      `Message: ${sanitize(formValues.message)}`
-    ];
-
-    try {
-      await addDoc(collection(db, 'leads'), {
-        ...formValues,
-        recipientId,
-        recipientName: recipient.name,
-        recipientEmail: recipient.gmail,
-        recipientPhone: recipient.whatsapp,
-        notificationChannel: channel,
-        createdAt: serverTimestamp()
-      });
-
-      if (channel === 'email') {
-        if (!hasEmailJsConfig) {
-          throw new Error('EmailJS configuration is missing.');
-        }
-
-        const payload = {
-          service_id: emailJsServiceId,
-          template_id: emailJsTemplateId,
-          user_id: emailJsUserId,
-          template_params: {
-            recipient_name: recipient.name,
-            recipient_email: recipient.gmail,
-            sender_name: sanitize(formValues.name),
-            sender_email: sanitize(formValues.email),
-            sender_phone: sanitize(formValues.phone),
-            project_type: sanitize(formValues.projectType),
-            message: sanitize(formValues.message),
-            channel: channelLabels[channel],
-            message_body: messageLines.join('\n')
-          }
-        };
-
-        const response = await fetch(EMAILJS_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`EmailJS error ${response.status}: ${errorText}`);
-        }
-
-        setStatusMessage(`Message delivered to ${recipient.name} via Gmail (${recipient.gmail}).`);
-      } else {
-        const waUrl = `https://wa.me/${recipient.whatsapp}?text=${encodeURIComponent(messageLines.join('\n'))}`;
-        window.open(waUrl, '_blank');
-        setStatusMessage(`WhatsApp chat opened for ${recipient.name} (${recipient.whatsapp}).`);
-      }
-
-      setLastRecipient(recipient);
-      setLastChannel(channel);
-      setSubmitted(true);
-      e.currentTarget.reset();
-    } catch (error) {
-      console.error('Contact submission failed', error);
-      setStatusMessage('Unable to deliver the message right now — please try again in a few minutes.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const features = [
     {
@@ -652,123 +542,32 @@ export default function Home() {
                 viewport={{ once: true }}
                 className="relative"
               >
-                {submitted ? (
-                  <motion.div 
-                    initial={{ opacity: 0, scale: 0.9, rotateY: 180 }}
-                    animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-                    className="p-12 rounded-[40px] ios-card text-center h-full flex flex-col items-center justify-center"
-                  >
-                    <motion.div 
-                      animate={{ scale: [1, 1.2, 1], rotate: [0, 360, 0] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                      className="w-20 h-20 rounded-full bg-brand-accent/20 flex items-center justify-center text-brand-accent mb-8"
-                    >
-                      <CheckCircle2 size={40} />
-                    </motion.div>
-                    <h2 className="text-3xl font-display font-bold mb-4">Message Sent!</h2>
-                    <p className="text-brand-text/60 text-lg">
-                      {statusMessage || `We have routed your note to ${lastRecipient.name}.`}
-                    </p>
-                    <p className="text-sm text-brand-text/50 mt-2">
-                      {lastChannel === 'email' ? `Gmail: ${lastRecipient.gmail}` : `Phone/WhatsApp: ${lastRecipient.whatsapp}`}
-                    </p>
-                    <button 
-                      onClick={() => {
-                        setSubmitted(false);
-                        setStatusMessage('');
-                      }}
-                      className="mt-8 text-brand-accent font-bold hover:underline"
-                    >
-                      Send another message
-                    </button>
-                  </motion.div>
-                ) : (
-                  <motion.form 
-                    onSubmit={handleSubmit} 
-                    whileHover={{ scale: 1.01 }}
-                    className="p-8 sm:p-10 rounded-[36px] ios-card space-y-5 sm:space-y-6 shadow-2xl shadow-black/5 w-full"
-                  >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-brand-text/50 ml-1">Full Name</label>
-                        <motion.input 
-                          whileFocus={{ scale: 1.02 }}
-                          type="text" name="name" required className="w-full bg-brand-secondary/50 border border-black/[0.05] rounded-2xl px-5 py-4 focus:outline-none focus:border-brand-accent transition-colors" placeholder="John Doe" />
+                <div className="p-10 rounded-[36px] ios-card space-y-6 shadow-2xl shadow-black/5">
+                  <h3 className="text-3xl font-display font-bold">Ready to collaborate?</h3>
+                  <p className="text-lg text-brand-text/60 leading-relaxed">
+                    Humari team aapke liye hamesha available hai — ek call ya email se hi start karo and we will get back within 24 hours.
+                  </p>
+                  <div className="grid grid-cols-1 gap-4">
+                    {founderProfiles.map((founder) => (
+                      <div key={founder.id} className="flex flex-col gap-2 rounded-2xl border border-black/[0.05] p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm uppercase tracking-widest text-brand-text/40">{founder.role}</p>
+                            <p className="text-xl font-semibold text-brand-text">{founder.name}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-brand-text/70">
+                          <Phone size={16} className="text-brand-accent" />
+                          <a href={`tel:${founder.phone.replace(/\\s+/g, '')}`} className="hover:text-brand-accent">{founder.phone}</a>
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-brand-text/70">
+                          <Mail size={16} className="text-brand-accent" />
+                          <a href={`mailto:${founder.email}`} className="hover:text-brand-accent">{founder.email}</a>
+                        </div>
                       </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-brand-text/50 ml-1">Email Address</label>
-                        <motion.input 
-                          whileFocus={{ scale: 1.02 }}
-                          type="email" name="email" required className="w-full bg-brand-secondary/50 border border-black/[0.05] rounded-2xl px-5 py-4 focus:outline-none focus:border-brand-accent transition-colors" placeholder="john@example.com" />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-brand-text/50 ml-1">Phone Number</label>
-                        <motion.input 
-                          whileFocus={{ scale: 1.02 }}
-                          type="tel" name="phone" className="w-full bg-brand-secondary/50 border border-black/[0.05] rounded-2xl px-5 py-4 focus:outline-none focus:border-brand-accent transition-colors" placeholder="+91 00000 00000" />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-brand-text/50 ml-1">Project Type</label>
-                        <motion.select 
-                          whileFocus={{ scale: 1.02 }}
-                          name="projectType" className="w-full bg-brand-secondary/50 border border-black/[0.05] rounded-2xl px-5 py-4 focus:outline-none focus:border-brand-accent transition-colors appearance-none">
-                          <option value="video-editing">Video Editing</option>
-                          <option value="motion-graphics">Motion Graphics</option>
-                          <option value="graphic-design">Graphic Design</option>
-                          <option value="web-development">Web Development</option>
-                          <option value="branding">Branding</option>
-                        </motion.select>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-brand-text/50 ml-1">Message Recipient</label>
-                        <motion.select
-                          name="recipient"
-                          defaultValue={founderProfiles[0].id}
-                          whileFocus={{ scale: 1.02 }}
-                          className="w-full bg-brand-secondary/50 border border-black/[0.05] rounded-2xl px-5 py-4 focus:outline-none focus:border-brand-accent transition-colors appearance-none"
-                        >
-                          {founderProfiles.map((profile) => (
-                            <option key={profile.id} value={profile.id}>
-                              {profile.name} · {profile.role}
-                            </option>
-                          ))}
-                        </motion.select>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-brand-text/50 ml-1">Notify Via</label>
-                        <motion.select
-                          name="channel"
-                          defaultValue="email"
-                          whileFocus={{ scale: 1.02 }}
-                          className="w-full bg-brand-secondary/50 border border-black/[0.05] rounded-2xl px-5 py-4 focus:outline-none focus:border-brand-accent transition-colors appearance-none"
-                        >
-                          {notificationChannels.map((channelOption) => (
-                            <option key={channelOption.value} value={channelOption.value}>
-                              {channelOption.label}
-                            </option>
-                          ))}
-                        </motion.select>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-brand-text/50 ml-1">Message</label>
-                      <motion.textarea 
-                        whileFocus={{ scale: 1.02 }}
-                        name="message" required rows={5} className="w-full bg-brand-secondary/50 border border-black/[0.05] rounded-2xl px-5 py-4 focus:outline-none focus:border-brand-accent transition-colors" placeholder="Tell us about your project goals..." />
-                    </div>
-                    <motion.button 
-                      whileHover={{ scale: 1.05, rotate: 1 }}
-                      whileTap={{ scale: 0.95 }}
-                      type="submit" disabled={loading} className="w-full py-5 rounded-full bg-brand-accent text-white font-bold text-lg flex items-center justify-center space-x-3 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 shadow-xl shadow-brand-accent/20"
-                    >
-                      {loading ? <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <><span>Send Message</span><Send size={20} /></>}
-                    </motion.button>
-                  </motion.form>
-                )}
+                    ))}
+                  </div>
+                </div>
               </motion.div>
           </div>
         </div>

@@ -19,17 +19,6 @@ View your app in AI Studio: https://ai.studio/apps/aa531873-5933-490c-8d09-f8433
 3. Run the app:
    `npm run dev`
 
-## Contact form delivery
+## Contact
 
-The contact form now routes messages directly from the browser:
-
-- Gmail deliveries go through [EmailJS](https://www.emailjs.com/). Configure your EmailJS service/template/public key and add the values below; the form sends every field (name, email, phone, project type, message) to the selected founder.
-- Phone/WhatsApp deliveries open a `wa.me` link pre-filled with the same details; the user can then tap to send the WhatsApp message.
-
-```
-VITE_EMAILJS_SERVICE_ID=your_emailjs_service
-VITE_EMAILJS_TEMPLATE_ID=your_emailjs_template
-VITE_EMAILJS_PUBLIC_KEY=your_emailjs_public_key
-```
-
-If the EmailJS keys are missing, the form will still record the lead in Firestore, but Gmail delivery will not work and an error message will be shown to the user.
+Agar aap kisi project ke liye baat karna chahte ho to Arman ya Editor ko call/email karo, unke details home section ke contact card me diye hain. Business inquiries ke liye `contact@graphitoagency.com` aur +91 7705090700 / +91 9277072409 par message bhejo, ya WhatsApp me chat shuru karo.
