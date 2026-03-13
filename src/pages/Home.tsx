@@ -103,9 +103,14 @@ const toolLogos = [
 ];
 
 const notificationChannels = [
-  { value: 'email', label: 'Email' },
+  { value: 'email', label: 'Gmail' },
   { value: 'phone', label: 'Phone / WhatsApp' }
 ];
+
+const channelLabels: Record<NotificationChannel, string> = {
+  email: 'Gmail',
+  phone: 'Phone / WhatsApp'
+};
 
 const founderProfiles = [
   {
@@ -114,6 +119,8 @@ const founderProfiles = [
     role: 'Founder & Creative Director',
     phone: '+91 7705090700',
     email: 'contact@graphitoagency.com',
+    gmail: 'armanali@gmail.com',
+    whatsapp: '919277072409',
     image: 'https://framerusercontent.com/images/kqv3sTb1FdwKJhQbeBRiQBo2HQ.png?width=863&height=998'
   },
   {
@@ -122,9 +129,13 @@ const founderProfiles = [
     role: 'Co-Founder & Technical / Editing Lead',
     phone: '+91 9277072409',
     email: 'arvind90782@gmail.com',
+    gmail: 'contact@graphitoagency.com',
+    whatsapp: '917705090700',
     image: 'https://lh3.googleusercontent.com/d/1e_jpmmyBMp9GT7aKE3_mFVQ5amBxhCZ-'
   }
 ];
+
+const EMAILJS_URL = 'https://api.emailjs.com/api/v1.0/email/send';
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState('All');
@@ -138,55 +149,92 @@ export default function Home() {
     ? portfolioItems 
     : portfolioItems.filter(item => item.category === activeCategory);
 
+  const emailJsServiceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+  const emailJsTemplateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+  const emailJsUserId = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+  const hasEmailJsConfig = Boolean(emailJsServiceId && emailJsTemplateId && emailJsUserId);
+  const [statusMessage, setStatusMessage] = useState('');
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+    setStatusMessage('');
     const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries()) as Record<string, string>;
-    const recipientId = data.recipient ?? founderProfiles[0].id;
-    const channel = (data.channel as NotificationChannel) ?? 'email';
+    const formValues = Object.fromEntries(formData.entries()) as Record<string, string>;
+
+    const recipientId = formValues.recipient ?? founderProfiles[0].id;
+    const channel = (formValues.channel as NotificationChannel) ?? 'email';
     const recipient = founderProfiles.find((profile) => profile.id === recipientId) ?? founderProfiles[0];
+    const sanitize = (value: string | undefined) => (value ? value.trim() : '—');
+
+    const messageLines = [
+      `Full Name: ${sanitize(formValues.name)}`,
+      `Email: ${sanitize(formValues.email)}`,
+      `Phone: ${sanitize(formValues.phone)}`,
+      `Project Type: ${sanitize(formValues.projectType)}`,
+      `Message: ${sanitize(formValues.message)}`
+    ];
+
     try {
       await addDoc(collection(db, 'leads'), {
-        ...data,
-        recipient: recipient.name,
-        recipientEmail: recipient.email,
-        recipientPhone: recipient.phone,
+        ...formValues,
+        recipientId,
+        recipientName: recipient.name,
+        recipientEmail: recipient.gmail,
+        recipientPhone: recipient.whatsapp,
         notificationChannel: channel,
         createdAt: serverTimestamp()
       });
-      setLastRecipient(recipient);
-      setLastChannel(channel);
-      setSubmitted(true);
-      e.currentTarget.reset();
 
-      try {
-        await fetch('/api/notify', {
+      if (channel === 'email') {
+        if (!hasEmailJsConfig) {
+          throw new Error('EmailJS configuration is missing.');
+        }
+
+        const payload = {
+          service_id: emailJsServiceId,
+          template_id: emailJsTemplateId,
+          user_id: emailJsUserId,
+          template_params: {
+            recipient_name: recipient.name,
+            recipient_email: recipient.gmail,
+            sender_name: sanitize(formValues.name),
+            sender_email: sanitize(formValues.email),
+            sender_phone: sanitize(formValues.phone),
+            project_type: sanitize(formValues.projectType),
+            message: sanitize(formValues.message),
+            channel: channelLabels[channel],
+            message_body: messageLines.join('\n')
+          }
+        };
+
+        const response = await fetch(EMAILJS_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            type: 'contact',
-            data: {
-              senderName: data.name,
-              senderEmail: data.email,
-              senderPhone: data.phone,
-              projectType: data.projectType,
-              message: data.message,
-              recipientId,
-              recipientName: recipient.name,
-              recipientEmail: recipient.email,
-              recipientPhone: recipient.phone,
-              channel
-            }
-          })
+          body: JSON.stringify(payload)
         });
-      } catch (notificationError) {
-        console.error('Notification webhook failed', notificationError);
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`EmailJS error ${response.status}: ${errorText}`);
+        }
+
+        setStatusMessage(`Message delivered to ${recipient.name} via Gmail (${recipient.gmail}).`);
+      } else {
+        const waUrl = `https://wa.me/${recipient.whatsapp}?text=${encodeURIComponent(messageLines.join('\n'))}`;
+        window.open(waUrl, '_blank');
+        setStatusMessage(`WhatsApp chat opened for ${recipient.name} (${recipient.whatsapp}).`);
       }
-    } catch (err) {
-      console.error(err);
+
+      setLastRecipient(recipient);
+      setLastChannel(channel);
+      setSubmitted(true);
+      e.currentTarget.reset();
+    } catch (error) {
+      console.error('Contact submission failed', error);
+      setStatusMessage('Unable to deliver the message right now — please try again in a few minutes.');
     } finally {
       setLoading(false);
     }
@@ -619,13 +667,16 @@ export default function Home() {
                     </motion.div>
                     <h2 className="text-3xl font-display font-bold mb-4">Message Sent!</h2>
                     <p className="text-brand-text/60 text-lg">
-                      We have routed your note to {lastRecipient.name}. Expect a reply via {lastChannel === 'email' ? 'email' : 'Phone/WhatsApp'} soon.
+                      {statusMessage || `We have routed your note to ${lastRecipient.name}.`}
                     </p>
                     <p className="text-sm text-brand-text/50 mt-2">
-                      {lastChannel === 'email' ? `Email: ${lastRecipient.email}` : `Phone/WhatsApp: ${lastRecipient.phone}`}
+                      {lastChannel === 'email' ? `Gmail: ${lastRecipient.gmail}` : `Phone/WhatsApp: ${lastRecipient.whatsapp}`}
                     </p>
                     <button 
-                      onClick={() => setSubmitted(false)}
+                      onClick={() => {
+                        setSubmitted(false);
+                        setStatusMessage('');
+                      }}
                       className="mt-8 text-brand-accent font-bold hover:underline"
                     >
                       Send another message

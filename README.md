@@ -21,12 +21,15 @@ View your app in AI Studio: https://ai.studio/apps/aa531873-5933-490c-8d09-f8433
 
 ## Contact form delivery
 
-The server exposes `POST /api/notify` for contact submissions. The backend uses SendGrid to forward the message to the selected founder, so you must supply SendGrid credentials in your environment:
+The contact form now routes messages directly from the browser:
+
+- Gmail deliveries go through [EmailJS](https://www.emailjs.com/). Configure your EmailJS service/template/public key and add the values below; the form sends every field (name, email, phone, project type, message) to the selected founder.
+- Phone/WhatsApp deliveries open a `wa.me` link pre-filled with the same details; the user can then tap to send the WhatsApp message.
 
 ```
-SENDGRID_API_KEY=your_sendgrid_api_key
-SENDGRID_FROM_EMAIL=contact@graphitoagency.com
-SENDGRID_FROM_NAME=Graphito Contact
+VITE_EMAILJS_SERVICE_ID=your_emailjs_service
+VITE_EMAILJS_TEMPLATE_ID=your_emailjs_template
+VITE_EMAILJS_PUBLIC_KEY=your_emailjs_public_key
 ```
 
-If the API key is missing, the form will still log leads into Firestore, but no emails will be delivered.
+If the EmailJS keys are missing, the form will still record the lead in Firestore, but Gmail delivery will not work and an error message will be shown to the user.
