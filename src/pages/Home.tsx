@@ -64,51 +64,7 @@ const springTransition = {
   damping: 20
 };
 
-export default function Home() {
-  const [activeCategory, setActiveCategory] = useState('All');
-  const [selectedItem, setSelectedItem] = useState<typeof portfolioItems[0] | null>(null);
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const filteredItems = activeCategory === 'All' 
-    ? portfolioItems 
-    : portfolioItems.filter(item => item.category === activeCategory);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
-    try {
-      await addDoc(collection(db, 'leads'), {
-        ...data,
-        createdAt: serverTimestamp()
-      });
-      setSubmitted(true);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const features = [
-    {
-      title: 'Strategic Design',
-      description: 'We don\'t just make it look good; we make it work for your brand goals.',
-      icon: <Zap className="text-brand-accent" size={24} />
-    },
-    {
-      title: 'Creative Excellence',
-      description: 'Our team of experts pushes the boundaries of visual storytelling.',
-      icon: <Trophy className="text-brand-accent" size={24} />
-    },
-    {
-      title: 'Fast Workflow',
-      description: 'Reliable delivery times without compromising on premium quality.',
-      icon: <Zap className="text-brand-accent" size={24} />
-    }
-  ];
+type NotificationChannel = 'email' | 'phone';
 
 const services = [
   { title: 'Premium Video Editing', description: 'Cinematic storytelling with professional color grading and sound design.', icon: <Video size={32} /> },
@@ -140,26 +96,117 @@ const toolLogos = [
     name: 'ChatGPT',
     src: 'https://cdn-icons-png.flaticon.com/512/11865/11865326.png'
   },
-    {
-      name: 'Visual Studio Code',
-      src: 'https://cdn.worldvectorlogo.com/logos/visual-studio-code-1.svg'
-    }
-  ];
+  {
+    name: 'Visual Studio Code',
+    src: 'https://cdn.worldvectorlogo.com/logos/visual-studio-code-1.svg'
+  }
+];
 
-  const founders = [
+const notificationChannels = [
+  { value: 'email', label: 'Email' },
+  { value: 'phone', label: 'Phone / WhatsApp' }
+];
+
+const founderProfiles = [
+  {
+    id: 'arman',
+    name: 'Arman Ali',
+    role: 'Founder & Creative Director',
+    phone: '+91 7705090700',
+    email: 'contact@graphitoagency.com',
+    image: 'https://framerusercontent.com/images/kqv3sTb1FdwKJhQbeBRiQBo2HQ.png?width=863&height=998'
+  },
+  {
+    id: 'editor',
+    name: 'Editor Nishant',
+    role: 'Co-Founder & Technical / Editing Lead',
+    phone: '+91 9277072409',
+    email: 'arvind90782@gmail.com',
+    image: 'https://lh3.googleusercontent.com/d/1e_jpmmyBMp9GT7aKE3_mFVQ5amBxhCZ-'
+  }
+];
+
+export default function Home() {
+  const [activeCategory, setActiveCategory] = useState('All');
+  const [selectedItem, setSelectedItem] = useState<typeof portfolioItems[0] | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [lastRecipient, setLastRecipient] = useState(founderProfiles[0]);
+  const [lastChannel, setLastChannel] = useState<NotificationChannel>('email');
+
+  const filteredItems = activeCategory === 'All' 
+    ? portfolioItems 
+    : portfolioItems.filter(item => item.category === activeCategory);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData.entries()) as Record<string, string>;
+    const recipientId = data.recipient ?? founderProfiles[0].id;
+    const channel = (data.channel as NotificationChannel) ?? 'email';
+    const recipient = founderProfiles.find((profile) => profile.id === recipientId) ?? founderProfiles[0];
+    try {
+      await addDoc(collection(db, 'leads'), {
+        ...data,
+        recipient: recipient.name,
+        recipientEmail: recipient.email,
+        recipientPhone: recipient.phone,
+        notificationChannel: channel,
+        createdAt: serverTimestamp()
+      });
+      setLastRecipient(recipient);
+      setLastChannel(channel);
+      setSubmitted(true);
+      e.currentTarget.reset();
+
+      try {
+        await fetch('/api/notify', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            type: 'contact',
+            data: {
+              senderName: data.name,
+              senderEmail: data.email,
+              senderPhone: data.phone,
+              projectType: data.projectType,
+              message: data.message,
+              recipientId,
+              recipientName: recipient.name,
+              recipientEmail: recipient.email,
+              recipientPhone: recipient.phone,
+              channel
+            }
+          })
+        });
+      } catch (notificationError) {
+        console.error('Notification webhook failed', notificationError);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const features = [
     {
-      name: 'Arman Ali',
-      role: 'Founder & Creative Director',
-      phone: '+91 7705090700',
-      email: 'contact@graphitoagency.com',
-      image: 'https://framerusercontent.com/images/kqv3sTb1FdwKJhQbeBRiQBo2HQ.png?width=863&height=998'
+      title: 'Strategic Design',
+      description: 'We don\'t just make it look good; we make it work for your brand goals.',
+      icon: <Zap className="text-brand-accent" size={24} />
     },
     {
-      name: 'Editor Nishant',
-      role: 'Co-Founder & Technical / Editing Lead',
-      phone: '+91 9277072409',
-      email: 'arvind90782@gmail.com',
-      image: 'https://lh3.googleusercontent.com/d/1e_jpmmyBMp9GT7aKE3_mFVQ5amBxhCZ-'
+      title: 'Creative Excellence',
+      description: 'Our team of experts pushes the boundaries of visual storytelling.',
+      icon: <Trophy className="text-brand-accent" size={24} />
+    },
+    {
+      title: 'Fast Workflow',
+      description: 'Reliable delivery times without compromising on premium quality.',
+      icon: <Zap className="text-brand-accent" size={24} />
     }
   ];
 
@@ -468,7 +515,7 @@ const toolLogos = [
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 mb-24 sm:mb-32">
-            {founders.map((founder, index) => (
+            {founderProfiles.map((founder, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, x: index % 2 === 0 ? -100 : 100, rotate: index % 2 === 0 ? -10 : 10 }}
@@ -533,20 +580,20 @@ const toolLogos = [
                   <div className="w-14 h-14 rounded-2xl bg-brand-accent/10 flex items-center justify-center text-brand-accent">
                     <Phone size={24} />
                   </div>
-                  <div>
-                    <p className="text-[#5F6470] dark:text-[#B9BFC9] text-sm uppercase tracking-widest font-bold">Call Us</p>
-                    <p className="text-lg sm:text-xl font-semibold text-[#1D1D1F] dark:text-[#EBEBF5]/90">+91 7705090700</p>
-                    <p className="text-lg sm:text-xl font-semibold text-[#1D1D1F] dark:text-[#EBEBF5]/90">+91 9277072409</p>
-                  </div>
+                    <div>
+                      <p className="text-sm uppercase tracking-widest font-bold text-[#0F172A] dark:text-[#E2E8F0]">Call Us</p>
+                      <p className="text-lg sm:text-xl font-semibold text-[#0F172A] dark:text-[#F8FAFC]">+91 7705090700</p>
+                      <p className="text-lg sm:text-xl font-semibold text-[#0F172A] dark:text-[#F8FAFC]">+91 9277072409</p>
+                    </div>
                 </div>
                 <div className="flex items-center space-x-6">
                   <div className="w-14 h-14 rounded-2xl bg-brand-accent/10 flex items-center justify-center text-brand-accent">
                     <Mail size={24} />
                   </div>
-                  <div>
-                    <p className="text-[#5F6470] dark:text-[#B9BFC9] text-sm uppercase tracking-widest font-bold">Email Us</p>
-                    <p className="text-lg sm:text-xl font-semibold text-[#1D1D1F] dark:text-[#EBEBF5]/90">contact@graphitoagency.com</p>
-                  </div>
+                    <div>
+                      <p className="text-sm uppercase tracking-widest font-bold text-[#0F172A] dark:text-[#E2E8F0]">Email Us</p>
+                      <p className="text-lg sm:text-xl font-semibold text-[#0F172A] dark:text-[#F8FAFC]">contact@graphitoagency.com</p>
+                    </div>
                 </div>
               </div>
             </div>
@@ -571,8 +618,11 @@ const toolLogos = [
                       <CheckCircle2 size={40} />
                     </motion.div>
                     <h2 className="text-3xl font-display font-bold mb-4">Message Sent!</h2>
-                    <p className="text-brand-text/50 text-lg">
-                      Thank you for reaching out. Our team will contact you shortly.
+                    <p className="text-brand-text/60 text-lg">
+                      We have routed your note to {lastRecipient.name}. Expect a reply via {lastChannel === 'email' ? 'email' : 'Phone/WhatsApp'} soon.
+                    </p>
+                    <p className="text-sm text-brand-text/50 mt-2">
+                      {lastChannel === 'email' ? `Email: ${lastRecipient.email}` : `Phone/WhatsApp: ${lastRecipient.phone}`}
                     </p>
                     <button 
                       onClick={() => setSubmitted(false)}
@@ -618,6 +668,38 @@ const toolLogos = [
                           <option value="graphic-design">Graphic Design</option>
                           <option value="web-development">Web Development</option>
                           <option value="branding">Branding</option>
+                        </motion.select>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-brand-text/50 ml-1">Message Recipient</label>
+                        <motion.select
+                          name="recipient"
+                          defaultValue={founderProfiles[0].id}
+                          whileFocus={{ scale: 1.02 }}
+                          className="w-full bg-brand-secondary/50 border border-black/[0.05] rounded-2xl px-5 py-4 focus:outline-none focus:border-brand-accent transition-colors appearance-none"
+                        >
+                          {founderProfiles.map((profile) => (
+                            <option key={profile.id} value={profile.id}>
+                              {profile.name} · {profile.role}
+                            </option>
+                          ))}
+                        </motion.select>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-brand-text/50 ml-1">Notify Via</label>
+                        <motion.select
+                          name="channel"
+                          defaultValue="email"
+                          whileFocus={{ scale: 1.02 }}
+                          className="w-full bg-brand-secondary/50 border border-black/[0.05] rounded-2xl px-5 py-4 focus:outline-none focus:border-brand-accent transition-colors appearance-none"
+                        >
+                          {notificationChannels.map((channelOption) => (
+                            <option key={channelOption.value} value={channelOption.value}>
+                              {channelOption.label}
+                            </option>
+                          ))}
                         </motion.select>
                       </div>
                     </div>

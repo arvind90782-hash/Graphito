@@ -13,11 +13,37 @@ async function startServer() {
   app.use(express.json());
 
   // API Routes
+  const contactDirectory = {
+    arman: {
+      name: 'Arman Ali',
+      email: 'contact@graphitoagency.com',
+      phone: '+91 7705090700'
+    },
+    editor: {
+      name: 'Editor Nishant',
+      email: 'arvind90782@gmail.com',
+      phone: '+91 9277072409'
+    }
+  };
+
   app.post("/api/notify", (req, res) => {
     const { type, data } = req.body;
-    console.log(`[NOTIFICATION] ${type}:`, data);
-    // In a real app, you'd send email/whatsapp here
-    res.json({ success: true, message: "Notification sent to admins" });
+    if (type === 'contact') {
+      const recipient = contactDirectory[data?.recipientId] ?? null;
+      console.log('[NOTIFICATION] Incoming contact lead:', {
+        senderName: data?.senderName,
+        senderEmail: data?.senderEmail,
+        senderPhone: data?.senderPhone,
+        projectType: data?.projectType,
+        message: data?.message,
+        recipient,
+        channel: data?.channel
+      });
+    } else {
+      console.log(`[NOTIFICATION] ${type}:`, data);
+    }
+    // In a real app, hook this data to your email / whatsapp provider here
+    res.json({ success: true, message: "Notification logged" });
   });
 
   app.get("/api/health", (req, res) => {
