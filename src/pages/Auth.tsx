@@ -6,11 +6,19 @@ import {
   GoogleAuthProvider, 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
-  sendPasswordResetEmail 
+  sendPasswordResetEmail,
+  signInWithPhoneNumber,
+  RecaptchaVerifier,
+  type ConfirmationResult
 } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useNavigate, Link } from 'react-router-dom';
-import { LogIn, ShieldCheck, Mail, Lock, Eye, EyeOff, ArrowLeft, UserPlus } from 'lucide-react';
+import { LogIn, ShieldCheck, Mail, Lock, Eye, EyeOff, ArrowLeft, UserPlus, Phone } from 'lucide-react';
+declare global {
+  interface Window {
+    __graphitoRecaptcha?: RecaptchaVerifier;
+  }
+}
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -24,11 +32,91 @@ export default function Auth() {
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
   const passwordAutoComplete = isLogin ? 'current-password' : 'new-password';
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneCode, setPhoneCode] = useState('');
+  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+  const [sendingOtp, setSendingOtp] = useState(false);
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [phoneHelp, setPhoneHelp] = useState<string | null>(null);
 
   const handleFieldChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (event: ChangeEvent<HTMLInputElement>) => {
     setter(event.target.value);
     if (error) {
       setError(null);
+    }
+  };
+
+  const resetRecaptcha = () => {
+    if (typeof window !== 'undefined' && window.__graphitoRecaptcha) {
+      window.__graphitoRecaptcha.clear();
+      window.__graphitoRecaptcha = undefined;
+    }
+  };
+
+  const ensureRecaptcha = () => {
+    if (typeof window === 'undefined') {
+      return null;
+    }
+    if (!window.__graphitoRecaptcha) {
+      window.__graphitoRecaptcha = new RecaptchaVerifier(auth, 'recaptcha-container', { size: 'invisible' });
+      window.__graphitoRecaptcha.render().catch(() => null);
+    }
+    return window.__graphitoRecaptcha;
+  };
+
+  const clearPhoneFlow = () => {
+    setPhoneCode('');
+    setPhoneNumber('');
+    setConfirmationResult(null);
+    setPhoneError(null);
+    setPhoneHelp(null);
+    resetRecaptcha();
+  };
+
+  const handleSendOtp = async () => {
+    if (!phoneNumber?.trim()) {
+      setPhoneError('Enter a valid phone number (with country code).');
+      return;
+    }
+    try {
+      setSendingOtp(true);
+      setPhoneError(null);
+      const verifier = ensureRecaptcha();
+      if (!verifier) {
+        throw new Error('Recaptcha is not ready yet.');
+      }
+      const confirmation = await signInWithPhoneNumber(auth, phoneNumber.trim(), verifier);
+      setConfirmationResult(confirmation);
+      setPhoneHelp('Verification code sent. Enter it below to continue.');
+      setMessage('One-time code sent to your phone.');
+    } catch (err: any) {
+      setPhoneError(err?.message || 'Unable to send verification code.');
+    } finally {
+      setSendingOtp(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!confirmationResult) {
+      setPhoneError('Request a code first.');
+      return;
+    }
+    if (!phoneCode?.trim()) {
+      setPhoneError('Enter the code you received.');
+      return;
+    }
+    try {
+      setVerifyingOtp(true);
+      setPhoneError(null);
+      await confirmationResult.confirm(phoneCode.trim());
+      setPhoneHelp('Phone verified. Redirecting…');
+      clearPhoneFlow();
+      navigate('/dashboard');
+    } catch (err: any) {
+      setPhoneError(err?.message || 'Code verification failed.');
+    } finally {
+      setVerifyingOtp(false);
     }
   };
   
@@ -244,6 +332,75 @@ export default function Auth() {
           <span>Google</span>
         </button>
 
+        <div className="mt-6 p-5 rounded-3xl border border-white/10 bg-white/5 space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-white/60 text-sm uppercase tracking-[0.4em]">Phone OTP</p>
+              <p className="text-white/40 text-xs">Send a code, enter it, and jump into your dashboard.</p>
+            </div>
+            <button
+              type="button"
+              onClick={clearPhoneFlow}
+              className="text-xs text-white/30 hover:text-white transition-colors"
+            >
+              Reset
+            </button>
+          </div>
+          <div className="space-y-3">
+            <div className="relative">
+              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
+              <input
+                value={phoneNumber}
+                onChange={(e) => {
+                  setPhoneNumber(e.target.value);
+                  if (phoneError) setPhoneError(null);
+                }}
+                placeholder="+91 77050 90700"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-4 focus:outline-none focus:border-brand-accent transition-colors"
+                type="tel"
+              />
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={handleSendOtp}
+                disabled={sendingOtp}
+                className="flex-1 py-3 rounded-full bg-brand-accent text-black font-bold text-sm uppercase tracking-[0.3em] disabled:opacity-50"
+              >
+                {sendingOtp ? 'Sending…' : confirmationResult ? 'Resend Code' : 'Send Code'}
+              </button>
+              {confirmationResult && (
+                <button
+                  type="button"
+                  onClick={handleVerifyOtp}
+                  disabled={verifyingOtp}
+                  className="flex-1 py-3 rounded-full glass font-bold text-sm uppercase tracking-[0.3em] disabled:opacity-50"
+                >
+                  {verifyingOtp ? 'Verifying…' : 'Verify Code'}
+                </button>
+              )}
+            </div>
+            {confirmationResult && (
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
+                <input
+                  value={phoneCode}
+                  onChange={(e) => setPhoneCode(e.target.value)}
+                  placeholder="Enter verification code"
+                  type="text"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-4 focus:outline-none focus:border-brand-accent transition-colors"
+                />
+              </div>
+            )}
+            {phoneHelp && (
+              <p className="text-xs text-brand-accent/80">{phoneHelp}</p>
+            )}
+            {phoneError && (
+              <p className="text-xs text-red-400">{phoneError}</p>
+            )}
+          </div>
+        </div>
+
         <p className="mt-8 text-center text-sm text-white/50">
           {isLogin ? "Don't have an account? " : "Already have an account? "}
           <button 
@@ -257,6 +414,7 @@ export default function Auth() {
         <p className="mt-8 text-center text-xs text-white/30 leading-relaxed">
           By continuing, you agree to Graphito's Terms of Service and Privacy Policy. Secure authentication powered by Firebase.
         </p>
+        <div id="recaptcha-container" className="sr-only" />
       </motion.div>
 
       {/* Forgot Password Modal */}
