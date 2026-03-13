@@ -18,3 +18,15 @@ View your app in AI Studio: https://ai.studio/apps/aa531873-5933-490c-8d09-f8433
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+
+## Contact form delivery
+
+The server exposes `POST /api/notify` for contact submissions. The backend uses SendGrid to forward the message to the selected founder, so you must supply SendGrid credentials in your environment:
+
+```
+SENDGRID_API_KEY=your_sendgrid_api_key
+SENDGRID_FROM_EMAIL=contact@graphitoagency.com
+SENDGRID_FROM_NAME=Graphito Contact
+```
+
+If the API key is missing, the form will still log leads into Firestore, but no emails will be delivered.
