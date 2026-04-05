@@ -274,3 +274,403 @@ a {
 .animate-sticker {
   animation: sticker-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
+
+/* Responsive optimization layer */
+html,
+body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+video,
+iframe,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+section[id] {
+  scroll-margin-top: 5.5rem;
+}
+
+@media (max-width: 1024px) {
+  .brand-wordmark {
+    letter-spacing: 0.06em;
+  }
+
+  .hero-title {
+    font-size: clamp(4.2rem, 7.8vw, 6.2rem);
+  }
+
+  #graphics-project .columns-1 {
+    column-gap: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  nav.fixed .h-20 {
+    height: 4rem !important;
+  }
+
+  nav.fixed .brand-wordmark {
+    font-size: 1.2rem !important;
+    letter-spacing: 0.05em;
+  }
+
+  nav.fixed .w-12.h-12 {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+  }
+
+  nav.fixed .md\:hidden button {
+    padding: 0.35rem !important;
+  }
+
+  #home {
+    padding-top: 4rem !important;
+  }
+
+  #home > section {
+    min-height: auto !important;
+    padding-top: 4.5rem;
+    padding-bottom: 5rem;
+  }
+
+  #home > section .grid {
+    gap: 2rem;
+  }
+
+  #home > section h1 {
+    font-size: clamp(3rem, 11vw, 4.4rem) !important;
+    line-height: 0.9 !important;
+  }
+
+  #home > section h1 > span {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+  }
+
+  #home > section a[href="#portfolio"],
+  #home > section a[href="#contact"] {
+    width: 100%;
+  }
+
+  #home > section .space-y-8.max-w-2xl {
+    gap: 1.25rem;
+  }
+
+  #home > section [class*='-bottom-10'] {
+    width: 92%;
+    bottom: -2rem;
+    padding: 0.85rem 1rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+  }
+
+  #services {
+    padding-top: 4.5rem !important;
+    padding-bottom: 4.5rem !important;
+  }
+
+  #services .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.85rem !important;
+  }
+
+  #services .grid > * {
+    min-height: 0 !important;
+    padding: 1rem !important;
+    border-radius: 22px;
+  }
+
+  #services .grid > * > div:first-child {
+    width: 2.75rem !important;
+    height: 2.75rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  #services .grid > * h3 {
+    font-size: 1.3rem !important;
+    line-height: 0.95 !important;
+  }
+
+  #services .grid > * p {
+    font-size: 0.86rem !important;
+  }
+
+  #themes {
+    padding-top: 4.5rem !important;
+    padding-bottom: 4.5rem !important;
+  }
+
+  #themes .grid {
+    gap: 1rem !important;
+  }
+
+  #portfolio {
+    padding-top: 4.5rem !important;
+    padding-bottom: 4.5rem !important;
+  }
+
+  #portfolio .relative.w-full.max-w-5xl {
+    max-width: 100% !important;
+  }
+
+  #graphics-project {
+    padding-top: 4.5rem !important;
+    padding-bottom: 4.5rem !important;
+  }
+
+  #graphics-project .columns-1 {
+    column-count: 2 !important;
+    column-gap: 0.85rem !important;
+  }
+
+  #graphics-project .flex.flex-wrap.justify-center {
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  #graphics-project .flex.flex-wrap.justify-center button {
+    flex: 1 1 calc(50% - 0.25rem);
+    max-width: calc(50% - 0.25rem);
+    padding: 0.65rem 0.75rem;
+    font-size: 0.72rem;
+  }
+
+  #graphics-project .break-inside-avoid {
+    margin-bottom: 0.85rem !important;
+  }
+
+  #testimonials {
+    padding-top: 4.5rem !important;
+    padding-bottom: 4.5rem !important;
+  }
+
+  #testimonials .grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  #testimonials .grid > * {
+    padding: 1rem !important;
+    border-radius: 24px;
+  }
+
+  #process {
+    padding-top: 4.5rem !important;
+    padding-bottom: 4.5rem !important;
+  }
+
+  #process .grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  #process .grid > * {
+    padding: 1rem !important;
+    border-radius: 24px;
+  }
+
+  #trust {
+    padding-top: 4.5rem !important;
+    padding-bottom: 4.5rem !important;
+  }
+
+  #trust .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+
+  #trust .grid > * {
+    min-height: 170px !important;
+    padding: 1rem !important;
+    border-radius: 24px;
+  }
+
+  #trust .grid > * > div:first-child {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+  }
+
+  #trust .grid > * > div:nth-child(2) {
+    font-size: clamp(2rem, 9vw, 3rem) !important;
+  }
+
+  #trust .grid > * > p {
+    font-size: 0.58rem !important;
+    letter-spacing: 0.16em;
+  }
+
+  #pricing {
+    padding-top: 4.5rem !important;
+    padding-bottom: 4.5rem !important;
+  }
+
+  #pricing .grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  #pricing .grid > * {
+    padding: 1.25rem !important;
+    border-radius: 28px;
+  }
+
+  #cta {
+    padding-top: 4.5rem !important;
+    padding-bottom: 4.5rem !important;
+  }
+
+  #cta .grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+
+  #about {
+    padding-top: 4.5rem !important;
+    padding-bottom: 4.5rem !important;
+  }
+
+  #about .grid-cols-2 {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  #about h2 {
+    font-size: clamp(2.8rem, 10vw, 4rem) !important;
+  }
+
+  #contact {
+    padding-top: 4.5rem !important;
+    padding-bottom: 4.5rem !important;
+  }
+
+  #contact .grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  #contact .ios-card {
+    padding: 1.25rem !important;
+  }
+
+  #contact h2 {
+    font-size: clamp(2.7rem, 10vw, 4rem) !important;
+  }
+
+  #contact .space-y-6 > .flex {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+
+  footer .grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+    margin-bottom: 2.5rem !important;
+  }
+
+  footer .brand-wordmark {
+    font-size: clamp(1.35rem, 5vw, 1.8rem) !important;
+    letter-spacing: 0.05em;
+  }
+}
+
+@media (max-width: 480px) {
+  nav.fixed .h-20 {
+    height: 3.75rem !important;
+  }
+
+  nav.fixed .brand-wordmark {
+    font-size: 1rem !important;
+    letter-spacing: 0.04em;
+  }
+
+  nav.fixed .w-12.h-12 {
+    width: 2.2rem !important;
+    height: 2.2rem !important;
+  }
+
+  #home > section {
+    padding-top: 3.75rem;
+    padding-bottom: 4.25rem;
+  }
+
+  #home > section h1 {
+    font-size: clamp(2.7rem, 16vw, 3.6rem) !important;
+  }
+
+  #home > section p {
+    font-size: 0.95rem;
+  }
+
+  #home > section .relative.max-w-sm {
+    max-width: 18rem;
+  }
+
+  #home > section [class*='-bottom-10'] {
+    width: 94%;
+    bottom: -1.75rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+  }
+
+  #home > section a[href="#portfolio"],
+  #home > section a[href="#contact"] {
+    padding: 0.9rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  #services .grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  #services .grid > * {
+    padding: 0.95rem !important;
+  }
+
+  #graphics-project .columns-1 {
+    column-gap: 0.65rem !important;
+  }
+
+  #graphics-project .flex.flex-wrap.justify-center button {
+    flex: 1 1 calc(50% - 0.35rem);
+    max-width: calc(50% - 0.35rem);
+    padding: 0.55rem 0.7rem;
+    font-size: 0.68rem;
+  }
+
+  #testimonials .grid > * p,
+  #process .grid > * p {
+    font-size: 0.92rem !important;
+  }
+
+  #trust .grid {
+    gap: 0.6rem !important;
+  }
+
+  #trust .grid > * {
+    min-height: 154px !important;
+    padding: 0.85rem !important;
+    border-radius: 22px;
+  }
+
+  #trust .grid > * > div:nth-child(2) {
+    font-size: clamp(1.8rem, 11vw, 2.6rem) !important;
+  }
+
+  #trust .grid > * > p {
+    font-size: 0.52rem !important;
+  }
+
+  #contact .ios-card {
+    padding: 1rem !important;
+  }
+
+  footer .brand-wordmark {
+    font-size: 1.35rem !important;
+  }
+}

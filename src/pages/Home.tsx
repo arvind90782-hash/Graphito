@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { 
-  ArrowRight, Video, Palette, Zap, Trophy, Globe, Layout, LayoutGrid, Mail, Phone, Search, Rocket
+  ArrowRight, Video, Palette, Zap, Trophy, Globe, Layout, LayoutGrid, Mail, Phone, Search, Rocket, Users, TrendingUp, Clock3
 } from 'lucide-react';
 import { Fragment, useEffect, useRef, useState, type ReactElement } from 'react';
 import heroVisualImage from '../../Hero image/Hero 1.png';
@@ -169,26 +169,26 @@ const trustStats = [
   {
     target: 150,
     suffix: '+',
-    label: 'Projects delivered',
-    icon: <Trophy size={20} />,
+    label: 'Projects Completed',
+    icon: <Trophy size={22} />,
   },
   {
-    target: 98,
-    suffix: '%',
-    label: 'Client satisfaction',
-    icon: <Globe size={20} />,
+    target: 80,
+    suffix: '+',
+    label: 'Happy Clients',
+    icon: <Users size={22} />,
   },
   {
-    target: 24,
-    suffix: 'h',
-    label: 'Quick response time',
-    icon: <Zap size={20} />,
+    target: 10,
+    suffix: 'M+',
+    label: 'Content Reach',
+    icon: <TrendingUp size={22} />,
   },
   {
     target: 3,
     suffix: '+',
-    label: 'Years of experience',
-    icon: <LayoutGrid size={20} />,
+    label: 'Years Experience',
+    icon: <Clock3 size={22} />,
   },
 ] as const;
 
@@ -279,56 +279,72 @@ function AnimatedTrustStatCard({
   delayMs = 0,
 }: AnimatedTrustStatProps) {
   const cardRef = useRef<HTMLDivElement | null>(null);
+  const numberRef = useRef<HTMLDivElement | null>(null);
   const [displayValue, setDisplayValue] = useState(0);
   const [hasAnimated, setHasAnimated] = useState(false);
 
   useEffect(() => {
-    const node = cardRef.current;
+    const cardNode = cardRef.current;
+    const numberNode = numberRef.current;
 
-    if (!node || hasAnimated) {
+    if (!cardNode || !numberNode || hasAnimated) {
       return;
     }
 
-    let timeoutId: number | undefined;
     let rafId = 0;
+    let timeoutId = 0;
+
+    const startAnimation = () => {
+      const rawTarget = Number(numberNode.dataset.target || target);
+      const duration = 2000;
+      const animationStart = performance.now();
+
+      const tick = (now: number) => {
+        const progress = Math.min((now - animationStart) / duration, 1);
+        const eased = 1 - (1 - progress) ** 3;
+        setDisplayValue(Math.round(rawTarget * eased));
+
+        if (progress < 1) {
+          rafId = window.requestAnimationFrame(tick);
+        } else {
+          setDisplayValue(rawTarget);
+        }
+      };
+
+      setHasAnimated(true);
+      rafId = window.requestAnimationFrame(tick);
+    };
+
+    if (typeof IntersectionObserver === 'undefined') {
+      timeoutId = window.setTimeout(startAnimation, delayMs);
+      return () => {
+        window.clearTimeout(timeoutId);
+        if (rafId) {
+          window.cancelAnimationFrame(rafId);
+        }
+      };
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry.isIntersecting) {
+        if (!entry?.isIntersecting) {
           return;
         }
 
-        setHasAnimated(true);
+        timeoutId = window.setTimeout(startAnimation, delayMs);
         observer.disconnect();
-
-        timeoutId = window.setTimeout(() => {
-          const duration = 1400;
-          const start = performance.now();
-
-          const tick = (now: number) => {
-            const progress = Math.min((now - start) / duration, 1);
-            const eased = 1 - (1 - progress) ** 3;
-            setDisplayValue(Math.round(target * eased));
-
-            if (progress < 1) {
-              rafId = window.requestAnimationFrame(tick);
-            }
-          };
-
-          rafId = window.requestAnimationFrame(tick);
-        }, delayMs);
       },
-      { threshold: 0.45 }
+      {
+        threshold: 0.55,
+        rootMargin: '0px 0px -8% 0px',
+      }
     );
 
-    observer.observe(node);
+    observer.observe(cardNode);
 
     return () => {
       observer.disconnect();
-
-      if (timeoutId !== undefined) {
-        window.clearTimeout(timeoutId);
-      }
-
+      window.clearTimeout(timeoutId);
       if (rafId) {
         window.cancelAnimationFrame(rafId);
       }
@@ -340,18 +356,23 @@ function AnimatedTrustStatCard({
       ref={cardRef}
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+      viewport={{ once: true, amount: 0.6 }}
       transition={{ duration: 0.55 }}
-      className="rounded-[28px] glass border border-[var(--border-color)] p-6 sm:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
+      className="flex min-h-[250px] flex-col items-center justify-between rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(18,23,31,0.98),rgba(10,13,18,0.98))] px-6 py-8 text-center shadow-[0_24px_60px_rgba(0,0,0,0.28)]"
     >
-      <div className="w-12 h-12 rounded-2xl bg-brand-accent/10 text-brand-accent flex items-center justify-center mb-5">
+      <div className="flex h-14 w-14 items-center justify-center rounded-full border border-brand-accent/25 bg-brand-accent/10 text-brand-accent shadow-[0_0_24px_rgba(0,122,255,0.18)]">
         {icon}
       </div>
-      <div className="text-5xl sm:text-6xl font-display font-normal uppercase tracking-[0.03em] leading-none text-[var(--text-primary)] mb-3">
+      <div
+        ref={numberRef}
+        data-target={target}
+        data-suffix={suffix}
+        className="pt-4 whitespace-nowrap tabular-nums text-6xl sm:text-[4.9rem] font-display font-normal uppercase tracking-[0.01em] leading-none text-white drop-shadow-[0_8px_18px_rgba(0,0,0,0.35)]"
+      >
         {displayValue}
         {suffix}
       </div>
-      <p className="text-[var(--text-primary)]/55 uppercase tracking-[0.18em] text-sm">
+      <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.24em] text-white/42">
         {label}
       </p>
     </motion.div>
@@ -521,14 +542,14 @@ export default function Home() {
           <p className="text-center font-display font-normal uppercase tracking-[0.18em] text-[1.4rem] sm:text-[1.7rem] text-[var(--text-primary)]/80 mb-12">
             Software We Use
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8 lg:gap-10 items-start">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-5 sm:gap-6 lg:gap-8 items-stretch justify-items-center">
             {toolLogos.map((tool, idx) => (
               <motion.div
                 key={tool.name}
-                initial={{ opacity: 0, scale: 0.5 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ type: "spring", stiffness: 260, delay: idx * 0.05 }}
-                className="w-full max-w-[150px] justify-self-center flex flex-col items-center gap-4 cursor-default text-center"
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: idx * 0.04 }}
+                className="flex h-full w-full max-w-[150px] flex-col items-center gap-4 cursor-default text-center"
               >
                 <div className="flex h-24 w-24 sm:h-28 sm:w-28 items-center justify-center overflow-hidden rounded-[32px] border border-white/30 bg-white/0 p-3 sm:p-4 shadow-[0_25px_45px_rgba(15,23,42,0.25)]">
                   <img
@@ -539,7 +560,7 @@ export default function Home() {
                     referrerPolicy="no-referrer"
                   />
                 </div>
-                <p className="font-display font-normal uppercase tracking-[0.05em] leading-[0.95] text-[1.15rem] sm:text-[1.35rem] text-brand-text/80 min-h-[3.6rem] flex items-start justify-center">
+                <p className="font-display font-normal uppercase tracking-[0.05em] leading-[0.95] text-[1.1rem] sm:text-[1.25rem] text-brand-text/80 min-h-[3.6rem] flex items-start justify-center">
                   {tool.name}
                 </p>
               </motion.div>
@@ -901,7 +922,10 @@ export default function Home() {
       </section>
 
       {/* Trust Section */}
-      <section id="trust" className="py-20 sm:py-24 bg-[radial-gradient(circle_at_top,rgba(0,122,255,0.12),transparent_50%),linear-gradient(180deg,var(--bg-secondary),var(--bg-primary))]">
+      <section
+        id="trust"
+        className="py-20 sm:py-24 bg-[radial-gradient(circle_at_top,rgba(0,122,255,0.12),transparent_50%),linear-gradient(180deg,var(--bg-secondary),var(--bg-primary))]"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -921,7 +945,7 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 sm:gap-6">
             {trustStats.map((stat, index) => (
               <Fragment key={stat.label}>
                 <AnimatedTrustStatCard
