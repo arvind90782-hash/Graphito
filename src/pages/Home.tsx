@@ -98,6 +98,8 @@ const heroBackgroundImages = [
   heroBgImage9,
 ];
 
+const websiteThemeInquiryLink = `https://wa.me/917705090700?text=${encodeURIComponent('I want a website')}`;
+
 const graphicsCategories = [
   'All',
   'Thumbnail Images',
@@ -128,40 +130,34 @@ const graphicsProjects: Array<{
 
 const websiteThemes = [
   {
-    title: 'Bold Editorial',
-    category: 'Editorial',
-    description: 'Strong typography and dark composition for premium brands.',
-    image: heroBgImage1,
+    name: 'Business',
+    description: 'Professional layouts for corporate brands and service businesses.',
+    image: 'https://res.cloudinary.com/upwork-cloud/image/upload/c_scale%2Cw_1000/v1697751559/catalog/1715114392149532672/osyl7hpunx55am6f8k6h.jpg',
   },
   {
-    title: 'Blue Motion',
-    category: 'Motion',
-    description: 'Cinematic energy with a clean blue-forward interface.',
-    image: heroBgImage2,
+    name: 'Portfolio',
+    description: 'Showcase your work with a clean, visual-first presentation.',
+    image: 'https://cdn.dribbble.com/userupload/34778552/file/original-0465b09dfd39d44b5088e112235b41b9.jpg',
   },
   {
-    title: 'Brand Story',
-    category: 'Brand',
-    description: 'Balanced layouts that put visuals and copy in focus.',
-    image: heroBgImage3,
+    name: 'Agency',
+    description: 'Premium agency-style layouts designed to build trust fast.',
+    image: 'https://cdn.dribbble.com/userupload/38651611/file/original-c90803d4fa08a1724420efd6fa540188.png?resize=752x&vertical=center',
   },
   {
-    title: 'Social Launch',
-    category: 'Social',
-    description: 'Fast-moving creative direction for campaigns and offers.',
-    image: heroBgImage4,
+    name: 'Restaurant',
+    description: 'Elegant layouts for food, menus, bookings, and hospitality.',
+    image: 'https://cdn.prod.website-files.com/64da807a9aa000087e97b92d/6527c30162c135c18bbe9f5b_6421ecd649c5e784bd99f077_thumbnail560x720.png',
   },
   {
-    title: 'Neon Campaign',
-    category: 'Neon',
-    description: 'Blue glow accents that feel modern and high-impact.',
-    image: heroBgImage5,
+    name: 'Personal Brand',
+    description: 'A sharp identity-led layout for creators and professionals.',
+    image: 'https://cdn.dribbble.com/userupload/46677862/file/ef2e2340dc447860772bce69ec0b9a34.jpg?resize=752x&vertical=center',
   },
   {
-    title: 'Web Spotlight',
-    category: 'Web',
-    description: 'Conversion-first composition with strong hierarchy.',
-    image: heroBgImage6,
+    name: 'Startup',
+    description: 'Fast, modern landing pages built for launch and growth.',
+    image: 'https://cdn.dribbble.com/userupload/44857614/file/still-cc85b39c7e2e0732df7e52881ea5a568.png?format=webp&resize=400x300&vertical=center',
   },
 ] as const;
 
@@ -638,36 +634,45 @@ export default function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
             {websiteThemes.map((theme, index) => (
-              <motion.article
-                key={theme.title}
+              <motion.a
+                key={theme.name}
+                href={websiteThemeInquiryLink}
+                target="_blank"
+                rel="noreferrer"
                 initial={{ opacity: 0, y: 24, scale: 0.98 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                whileHover={{ y: -6, scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.55, delay: index * 0.06 }}
-                className="group relative overflow-hidden rounded-[32px] ios-card bg-[var(--bg-secondary)] border border-[var(--border-color)] shadow-[0_25px_70px_rgba(0,0,0,0.16)]"
+                className="group relative block overflow-hidden rounded-[32px] ios-card bg-[var(--bg-secondary)] border border-[var(--border-color)] shadow-[0_25px_70px_rgba(0,0,0,0.16)] cursor-pointer"
+                aria-label={`Open WhatsApp for ${theme.name} theme`}
               >
                 <div className="relative aspect-[4/5] overflow-hidden">
                   <img
                     src={theme.image}
-                    alt={theme.title}
+                    alt={`${theme.name} website theme preview`}
                     className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                     loading="lazy"
                     referrerPolicy="no-referrer"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
                   <div className="absolute top-4 left-4 rounded-full border border-white/10 bg-black/30 px-3 py-1 text-[0.6rem] uppercase tracking-[0.2em] text-white/75 backdrop-blur-md">
-                    {theme.category}
+                    Theme {index + 1}
                   </div>
                   <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
+                    <p className="mb-3 text-[0.62rem] uppercase tracking-[0.26em] text-white/70">
+                      Click to WhatsApp
+                    </p>
                     <h3 className="text-3xl font-display font-normal uppercase tracking-[0.04em] leading-none text-white">
-                      {theme.title}
+                      {theme.name}
                     </h3>
                     <p className="mt-3 text-sm sm:text-base text-white/75 leading-relaxed">
                       {theme.description}
                     </p>
                   </div>
                 </div>
-              </motion.article>
+              </motion.a>
             ))}
           </div>
         </div>
