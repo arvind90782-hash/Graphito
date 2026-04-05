@@ -678,3 +678,188 @@ section[id] {
     font-size: 1.35rem !important;
   }
 }
+
+/* Compressed desktop-style responsive layer */
+@media (min-width: 1200px) {
+  .max-w-7xl {
+    max-width: 1200px !important;
+  }
+
+  section[id] {
+    padding-top: 5rem !important;
+    padding-bottom: 5rem !important;
+  }
+
+  #services .grid,
+  #testimonials .grid,
+  #pricing .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  #process .grid,
+  #trust .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  #themes .columns-2,
+  #graphics-project .columns-2 {
+    column-count: 4 !important;
+    column-gap: 2rem !important;
+  }
+}
+
+@media (max-width: 1199px) and (min-width: 1024px) {
+  section[id] {
+    padding-top: 3.75rem !important;
+    padding-bottom: 3.75rem !important;
+  }
+
+  #services .grid,
+  #testimonials .grid,
+  #pricing .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  #process .grid,
+  #trust .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  #themes .columns-2,
+  #graphics-project .columns-2 {
+    column-count: 3 !important;
+    column-gap: 1.5rem !important;
+  }
+}
+
+@media (max-width: 1023px) and (min-width: 768px) {
+  section[id] {
+    padding-top: 3.25rem !important;
+    padding-bottom: 3.25rem !important;
+  }
+
+  #services .grid,
+  #testimonials .grid,
+  #process .grid,
+  #trust .grid,
+  #pricing .grid {
+    gap: 0.875rem !important;
+  }
+
+  #themes .columns-2,
+  #graphics-project .columns-2 {
+    column-count: 2 !important;
+    column-gap: 1rem !important;
+  }
+}
+
+@media (max-width: 767px) {
+  section[id] {
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.5rem !important;
+  }
+
+  #services .grid,
+  #testimonials .grid,
+  #process .grid,
+  #trust .grid,
+  #pricing .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+    align-items: stretch;
+  }
+
+  #services .grid > *,
+  #testimonials .grid > *,
+  #process .grid > *,
+  #trust .grid > *,
+  #pricing .grid > * {
+    width: min(100%, 220px) !important;
+    max-width: 220px !important;
+    justify-self: center !important;
+  }
+
+  #services .grid > *,
+  #process .grid > *,
+  #pricing .grid > * {
+    padding: 0.9rem !important;
+    min-height: 0 !important;
+  }
+
+  #testimonials .grid > * {
+    padding: 0.9rem !important;
+  }
+
+  #services .grid > * h3,
+  #process .grid > * h3,
+  #pricing .grid > * h3 {
+    font-size: clamp(1.05rem, 4vw, 1.25rem) !important;
+    line-height: 0.95 !important;
+  }
+
+  #services .grid > * p,
+  #process .grid > * p,
+  #testimonials .grid > * p {
+    font-size: 0.82rem !important;
+    line-height: 1.45 !important;
+  }
+
+  #pricing .grid > * p {
+    font-size: 0.82rem !important;
+    line-height: 1.45 !important;
+  }
+
+  #about .grid-cols-2 {
+    gap: 0.75rem !important;
+  }
+
+  #about .grid-cols-2 > * {
+    width: min(100%, 220px) !important;
+    max-width: 220px !important;
+    justify-self: center !important;
+  }
+
+  #themes .columns-2,
+  #graphics-project .columns-2 {
+    column-count: 2 !important;
+    column-gap: 0.75rem !important;
+  }
+
+  #themes .group,
+  #graphics-project .break-inside-avoid {
+    width: min(100%, 220px) !important;
+    max-width: 220px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  #graphics-project .flex.flex-wrap.justify-center button {
+    flex: 1 1 calc(50% - 0.25rem);
+    max-width: calc(50% - 0.25rem);
+    padding: 0.55rem 0.7rem;
+    font-size: 0.68rem;
+  }
+
+  #home > section h1 {
+    font-size: clamp(2.5rem, 10vw, 3.5rem) !important;
+  }
+
+  #home > section p {
+    font-size: 0.95rem;
+  }
+
+  #home > section a[href="#portfolio"],
+  #home > section a[href="#contact"] {
+    padding: 0.75rem 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  #trust .grid > * {
+    min-height: 160px !important;
+    padding: 0.9rem !important;
+  }
+
+  #trust .grid > * > div:nth-child(2) {
+    font-size: clamp(1.8rem, 10vw, 2.6rem) !important;
+  }
+}

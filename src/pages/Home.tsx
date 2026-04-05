@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { 
   ArrowRight, Video, Palette, Zap, Trophy, Globe, Layout, LayoutGrid, Mail, Phone, Search, Rocket, Users, TrendingUp, Clock3
 } from 'lucide-react';
-import { Fragment, useEffect, useRef, useState, type ReactElement } from 'react';
+import { Fragment, useEffect, useState, type ReactElement } from 'react';
 import heroVisualImage from '../../Hero image/Hero 1.png';
 import heroAboutImage from '../../Hero image/Hero medium 2.png';
 import heroBgImage1 from '../../Hero bg image/image 1.jpg';
@@ -163,26 +163,22 @@ const websiteThemes = [
 
 const trustStats = [
   {
-    target: 150,
-    suffix: '+',
+    value: '150+',
     label: 'Projects Completed',
     icon: <Trophy size={22} />,
   },
   {
-    target: 80,
-    suffix: '+',
+    value: '80+',
     label: 'Happy Clients',
     icon: <Users size={22} />,
   },
   {
-    target: 10,
-    suffix: 'M+',
+    value: '10M+',
     label: 'Content Reach',
     icon: <TrendingUp size={22} />,
   },
   {
-    target: 3,
-    suffix: '+',
+    value: '3+',
     label: 'Years Experience',
     icon: <Clock3 size={22} />,
   },
@@ -259,115 +255,46 @@ const pricingPlans = [
 
 type TrustStat = (typeof trustStats)[number];
 
-interface AnimatedTrustStatProps {
-  target: number;
-  suffix: string;
-  label: string;
+interface TrustStatCardProps {
+  value: TrustStat['value'];
+  label: TrustStat['label'];
   icon: ReactElement;
   delayMs?: number;
 }
 
-function AnimatedTrustStatCard({
-  target,
-  suffix,
+function TrustStatCard({
+  value,
   label,
   icon,
   delayMs = 0,
-}: AnimatedTrustStatProps) {
-  const cardRef = useRef<HTMLDivElement | null>(null);
-  const numberRef = useRef<HTMLDivElement | null>(null);
-  const [displayValue, setDisplayValue] = useState(0);
-  const [hasAnimated, setHasAnimated] = useState(false);
-
-  useEffect(() => {
-    const cardNode = cardRef.current;
-    const numberNode = numberRef.current;
-
-    if (!cardNode || !numberNode || hasAnimated) {
-      return;
-    }
-
-    let rafId = 0;
-    let timeoutId = 0;
-
-    const startAnimation = () => {
-      const rawTarget = Number(numberNode.dataset.target || target);
-      const duration = 2000;
-      const animationStart = performance.now();
-
-      const tick = (now: number) => {
-        const progress = Math.min((now - animationStart) / duration, 1);
-        const eased = 1 - (1 - progress) ** 3;
-        setDisplayValue(Math.round(rawTarget * eased));
-
-        if (progress < 1) {
-          rafId = window.requestAnimationFrame(tick);
-        } else {
-          setDisplayValue(rawTarget);
-        }
-      };
-
-      setHasAnimated(true);
-      rafId = window.requestAnimationFrame(tick);
-    };
-
-    if (typeof IntersectionObserver === 'undefined') {
-      timeoutId = window.setTimeout(startAnimation, delayMs);
-      return () => {
-        window.clearTimeout(timeoutId);
-        if (rafId) {
-          window.cancelAnimationFrame(rafId);
-        }
-      };
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry?.isIntersecting) {
-          return;
-        }
-
-        timeoutId = window.setTimeout(startAnimation, delayMs);
-        observer.disconnect();
-      },
-      {
-        threshold: 0.55,
-        rootMargin: '0px 0px -8% 0px',
-      }
-    );
-
-    observer.observe(cardNode);
-
-    return () => {
-      observer.disconnect();
-      window.clearTimeout(timeoutId);
-      if (rafId) {
-        window.cancelAnimationFrame(rafId);
-      }
-    };
-  }, [delayMs, hasAnimated, target]);
-
+}: TrustStatCardProps) {
   return (
     <motion.div
-      ref={cardRef}
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.6 }}
-      transition={{ duration: 0.55 }}
-      className="flex min-h-[250px] flex-col items-center justify-between rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(18,23,31,0.98),rgba(10,13,18,0.98))] px-6 py-8 text-center shadow-[0_24px_60px_rgba(0,0,0,0.28)]"
+      initial={{ opacity: 0, y: 22, scale: 0.965, filter: 'blur(10px)' }}
+      whileInView={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+      viewport={{ once: true, amount: 0.55 }}
+      transition={{
+        type: 'spring',
+        stiffness: 120,
+        damping: 18,
+        mass: 0.9,
+        delay: delayMs / 1000,
+      }}
+      className="group relative flex min-h-[250px] flex-col items-center justify-between overflow-hidden rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(18,23,31,0.98),rgba(10,13,18,0.98))] px-6 py-8 text-center shadow-[0_24px_60px_rgba(0,0,0,0.28)]"
     >
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_38%),linear-gradient(180deg,rgba(255,255,255,0.03),transparent_35%)] opacity-80" />
       <div className="flex h-14 w-14 items-center justify-center rounded-full border border-brand-accent/25 bg-brand-accent/10 text-brand-accent shadow-[0_0_24px_rgba(0,122,255,0.18)]">
         {icon}
       </div>
-      <div
-        ref={numberRef}
-        data-target={target}
-        data-suffix={suffix}
-        className="pt-4 whitespace-nowrap tabular-nums text-6xl sm:text-[4.9rem] font-display font-normal uppercase tracking-[0.01em] leading-none text-white drop-shadow-[0_8px_18px_rgba(0,0,0,0.35)]"
+      <motion.div
+        initial={{ opacity: 0, y: 14 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.55 }}
+        transition={{ duration: 0.5, delay: 0.08 + delayMs / 1000 }}
+        className="pt-4 whitespace-nowrap text-6xl sm:text-[4.9rem] font-display font-normal uppercase tracking-[0.01em] leading-none text-white drop-shadow-[0_8px_18px_rgba(0,0,0,0.35)]"
       >
-        {displayValue}
-        {suffix}
-      </div>
+        {value}
+      </motion.div>
       <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.24em] text-white/42">
         {label}
       </p>
@@ -583,7 +510,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-10">
             {services.map((service, index) => (
               <motion.div
                 key={index}
@@ -632,7 +559,7 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <div className="columns-1 sm:columns-2 xl:columns-3 [column-gap:2rem]">
+          <div className="columns-2 lg:columns-3 xl:columns-4 [column-gap:1.25rem] lg:[column-gap:1.5rem] xl:[column-gap:2rem]">
             {websiteThemes.map((theme, index) => (
               <motion.a
                 key={theme.name}
@@ -645,14 +572,14 @@ export default function Home() {
                 whileTap={{ scale: 0.98 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.55, delay: index * 0.06 }}
-                className="group relative mb-8 inline-block w-full overflow-hidden rounded-[32px] ios-card bg-[var(--bg-secondary)] border border-[var(--border-color)] shadow-[0_25px_70px_rgba(0,0,0,0.16)] cursor-pointer break-inside-avoid"
+                className="group relative mb-4 inline-block w-full overflow-hidden rounded-[32px] ios-card bg-[var(--bg-secondary)] border border-[var(--border-color)] shadow-[0_25px_70px_rgba(0,0,0,0.16)] cursor-pointer break-inside-avoid"
                 aria-label={`Open WhatsApp for ${theme.name} theme`}
               >
                 <div className="relative overflow-hidden">
                   <img
                     src={theme.image}
                     alt={`${theme.name} website theme preview`}
-                    className="block h-auto w-full object-contain object-center transition-transform duration-700 group-hover:scale-105"
+                    className="block h-auto w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                     loading="lazy"
                     referrerPolicy="no-referrer"
                   />
@@ -786,7 +713,7 @@ export default function Home() {
           <AnimatePresence mode="popLayout">
             <motion.div
               key={selectedGraphicsCategory}
-              className="columns-1 sm:columns-2 xl:columns-3 [column-gap:2rem]"
+              className="columns-2 lg:columns-3 xl:columns-4 [column-gap:1.25rem] lg:[column-gap:1.5rem] xl:[column-gap:2rem]"
             >
               {visibleGraphicsProjects.map((project, index) => (
                 <motion.article
@@ -838,7 +765,7 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {testimonials.map((testimonial, index) => {
               const initials = testimonial.name
                 .split(' ')
@@ -900,7 +827,7 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 sm:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
             {processSteps.map((step, index) => (
               <motion.article
                 key={step.step}
@@ -950,12 +877,11 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 sm:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
             {trustStats.map((stat, index) => (
               <Fragment key={stat.label}>
-                <AnimatedTrustStatCard
-                  target={stat.target}
-                  suffix={stat.suffix}
+                <TrustStatCard
+                  value={stat.value}
                   label={stat.label}
                   icon={stat.icon}
                   delayMs={index * 120}
@@ -987,7 +913,7 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {pricingPlans.map((plan, index) => (
               <motion.article
                 key={plan.name}
