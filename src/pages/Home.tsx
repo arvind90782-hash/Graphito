@@ -98,7 +98,7 @@ const heroBackgroundImages = [
   heroBgImage9,
 ];
 
-const websiteThemeInquiryLink = `https://wa.me/917705090700?text=${encodeURIComponent('I want a website')}`;
+const websiteThemeInquiryLink = `https://wa.me/919277072409?text=${encodeURIComponent('I want a website')}`;
 
 const graphicsCategories = [
   'All',
