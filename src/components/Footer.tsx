@@ -9,8 +9,8 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           <div className="col-span-1 md:col-span-2">
-            <Link to="/" className="flex items-center space-x-3 mb-6 group">
-              <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-brand-accent group-hover:scale-110 transition-transform duration-500">
+            <Link to="/" className="flex items-center gap-4 mb-6 group">
+              <div className="relative w-10 h-10 shrink-0 rounded-full overflow-hidden border-2 border-brand-accent group-hover:scale-110 transition-transform duration-500">
                 <img 
                   src="https://lh3.googleusercontent.com/d/17H8RdzgfShm19oGSl3PwR2d45FosJGbN" 
                   alt="Graphito Logo" 
@@ -18,8 +18,8 @@ export default function Footer() {
                   referrerPolicy="no-referrer"
                 />
               </div>
-              <span className="text-3xl font-display font-bold tracking-tighter text-[var(--text-primary)]">
-                GRAPHITO<span className="text-brand-accent">.</span>
+              <span className="brand-wordmark text-[1.65rem] sm:text-[2.35rem] font-display font-normal text-[var(--text-primary)]">
+                GRAPHITO<span className="ml-1 text-brand-accent">.</span>
               </span>
             </Link>
             <p className="text-[var(--text-primary)]/50 max-w-md mb-8 leading-relaxed">
@@ -52,7 +52,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-[var(--text-primary)] font-semibold mb-6">Quick Links</h4>
+            <h4 className="font-display font-normal uppercase tracking-[0.08em] leading-none text-[1.9rem] text-[var(--text-primary)] mb-6">
+              Quick Links
+            </h4>
             <ul className="space-y-4">
               <li><Link to="/services" className="text-[var(--text-primary)]/50 hover:text-brand-accent transition-colors">Services</Link></li>
               <li><Link to="/portfolio" className="text-[var(--text-primary)]/50 hover:text-brand-accent transition-colors">Portfolio</Link></li>
@@ -62,7 +64,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-[var(--text-primary)] font-semibold mb-6">Contact Us</h4>
+            <h4 className="font-display font-normal uppercase tracking-[0.08em] leading-none text-[1.9rem] text-[var(--text-primary)] mb-6">
+              Contact Us
+            </h4>
             <ul className="space-y-4">
               <li className="flex items-center space-x-3 text-[var(--text-primary)]/50">
                 <Mail size={18} className="text-brand-accent" />
@@ -90,11 +94,7 @@ export default function Footer() {
             <span>by</span>
             <span className="text-[var(--text-primary)]/60 font-medium">Editor Nishant</span>
           </div>
-          {hasGeminiApiKey && (
-            <span className="rounded-full border border-brand-accent/40 px-3 py-1 text-[var(--text-primary)]/60 text-[11px] font-semibold uppercase tracking-wider">
-              Google AI Studio key loaded
-            </span>
-          )}
+          
         </div>
       </div>
     </footer>
